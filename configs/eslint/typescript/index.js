@@ -41,10 +41,6 @@ module.exports = {
             WARN,
             { checkIntersections: true },
         ],
-        "@typescript-eslint/consistent-type-assertions": [
-            ERROR,
-            { assertionStyle: "never" },
-        ],
     },
     settings: {
         "import/resolver": {
