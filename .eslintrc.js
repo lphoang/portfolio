@@ -10,7 +10,7 @@ module.exports = {
   extends: [
     "eslint:recommended",
     "next",
-    "./configs/eslint/typescrpt",
+    "./configs/eslint/typescript",
     "prettier",
   ],
   ignorePatterns: ["**/libs/**/*", "**/dist/**/*"],

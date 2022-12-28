@@ -1,8 +1,13 @@
 module.exports = {
     "semi": false,
-    "trailingComma": "all",
+    "trailingComma": "none",
     "importOrder": ["^components/(.*)$", "^[./]"],
     "importOrderSeparation": true,
     "importOrderSortSpecifiers": true,
-    "arrowParens": "always",
+    "arrowParens": "avoid",
+    "singleQuote": true,
+    "bracketSpacing": true,
+    "endOfLine": "lf",
+    "semi": false,
+    "tabWidth": 2,
 }
