@@ -1,6 +1,7 @@
 import { ChakraProvider } from '@chakra-ui/react'
 import createCache from '@emotion/cache'
 import { CacheProvider } from '@emotion/react'
+import { AnimatePresence } from 'framer-motion'
 import type { AppProps } from 'next/app'
 
 import Layout from '../components/layouts/Main'
@@ -15,7 +16,9 @@ export default function App({ Component, pageProps, router }: AppProps) {
       <CacheProvider value={cache}>
         {globalStyles}
         <Layout router={router}>
-          <Component {...pageProps} key={router.route} />
+          <AnimatePresence initial={true} mode="wait">
+            <Component {...pageProps} key={router.route} />
+          </AnimatePresence>
         </Layout>
       </CacheProvider>
     </ChakraProvider>

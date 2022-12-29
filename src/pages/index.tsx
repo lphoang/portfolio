@@ -13,12 +13,13 @@ import Link from 'next/link'
 import { BioSection, BioYear } from '../components/Bio'
 import { Section } from '../components/Section'
 import { Paragraph } from '../components/common/Paragraph'
+import { Layout } from '../components/layouts/Layout'
 import { AddictionData } from '../shared/const/addiction'
 import { BioData } from '../shared/const/bio'
 
 const Home: NextPage<unknown> = () => {
   return (
-    <>
+    <Layout title="Homepage">
       <Container>
         <Box
           mt={10}
@@ -114,7 +115,7 @@ const Home: NextPage<unknown> = () => {
           </Box>
         </Section>
       </Container>
-    </>
+    </Layout>
   )
 }
 

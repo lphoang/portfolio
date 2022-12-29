@@ -17,5 +17,21 @@ export type NavbarProps = {
 
 export type SectionProps = {
   children: JSX.Element | JSX.Element[]
-  delay: string
+  delay?: string
+}
+
+export type GridItemProps = {
+  children: JSX.Element | string
+  href: string
+  title: string
+  thumbnail: string
+}
+
+export type WorkGridItemProps = Omit<GridItemProps, 'href'> & {
+  id: string
+}
+
+export type LayoutProps = {
+  title: string
+  children: JSX.Element | string
 }

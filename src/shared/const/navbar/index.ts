@@ -1,9 +1,5 @@
 export const NavbarData = [
   {
-    url: '/about',
-    title: 'About'
-  },
-  {
     url: '/works',
     title: 'Works'
   },
@@ -17,10 +13,6 @@ export const StackData = [
     {
       url: '/',
       title: 'Home'
-    },
-    {
-      url: '/about',
-      title: 'About'
     },
     {
       url: '/works',

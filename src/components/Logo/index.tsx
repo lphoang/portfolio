@@ -13,7 +13,9 @@ export const Logo = () => {
         <IconButton
           colorScheme="whiteAlpha"
           aria-label="logo"
-          icon={<Image src={logoImg} width={50} height={50} alt="logo" />}
+          icon={
+            <Image src={logoImg} priority width={50} height={50} alt="logo" />
+          }
         />
         <Text
           color={useColorModeValue('gray.800', 'whiteAlpha.900')}

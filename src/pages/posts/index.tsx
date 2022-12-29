@@ -5,13 +5,13 @@ import { Section } from '../../components/Section'
 import { WorkGridItem } from '../../components/common/GridItems'
 import { Layout } from '../../components/layouts/Layout'
 
-const Works: NextPage<unknown> = () => {
+const Posts: NextPage<unknown> = () => {
   const randomImageUrl = '/images/works.jpg'
   return (
-    <Layout title="Works">
+    <Layout title="Posts">
       <Container>
         <Heading as="h3" fontSize={20} my={10}>
-          Works
+          Posts
         </Heading>
 
         <SimpleGrid minChildWidth="210px" spacing="40px">
@@ -25,7 +25,7 @@ const Works: NextPage<unknown> = () => {
               Reprehenderit accusantium unde voluptatem dolorum?
             </WorkGridItem>
           </Section>
-          <Section delay="0.1">
+          <Section>
             <WorkGridItem
               id="second-work"
               title="My Second Work"
@@ -35,7 +35,7 @@ const Works: NextPage<unknown> = () => {
               Reprehenderit accusantium unde voluptatem dolorum?
             </WorkGridItem>
           </Section>
-          <Section delay="0.2">
+          <Section>
             <WorkGridItem
               id="third-work"
               title="My Third Work"
@@ -51,4 +51,4 @@ const Works: NextPage<unknown> = () => {
   )
 }
 
-export default Works
+export default Posts
