@@ -10,8 +10,7 @@ const Main = (props: MainProps) => {
     <Box as="main" pb={8}>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" type="image" href="/images/dev_icon.png" />
-        <title>Le Phuoc Hoang - Homepage</title>
+        <link rel="icon" type="image" href="/images/alien.svg" />
       </Head>
 
       <Navbar path={router.asPath} />

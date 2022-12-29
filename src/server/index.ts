@@ -1,21 +1,27 @@
-import { createServer } from 'http'
-import { parse } from 'url'
+import dotenv from 'dotenv'
 import next from 'next'
+
+import { getServer } from './modules/getServer'
+
+dotenv.config()
+
+const IsDevelopment = process.env.NODE_ENV !== 'production'
 
 const port = parseInt(process.env.PORT || '3000', 10)
 const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
-const handle = app.getRequestHandler()
+const handler = app.getRequestHandler()
 
-app.prepare().then(() => {
-  createServer((req, res) => {
-    const parsedUrl = parse(req.url!, true)
-    handle(req, res, parsedUrl)
-  }).listen(port)
+app
+  .prepare()
+  .then(() => {
+    const server = getServer(handler)
 
-  console.log(
-    `> Server listening at http://localhost:${port} as ${
-      dev ? 'development' : process.env.NODE_ENV
-    }`
-  )
-})
+    server.listen(port, () => {
+      // 開発時だけ見れればいいため
+      if (IsDevelopment) console.log(`> Ready on http://localhost:${port}`)
+    })
+  })
+  .catch((error: unknown) => {
+    console.error(error)
+  })

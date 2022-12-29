@@ -13,6 +13,10 @@ export const globalStyles = (
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
       }
+
+      .grid-item-thumbnail {
+        border-radius: 12px;
+      }
     `}
   />
 )
