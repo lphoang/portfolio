@@ -5,7 +5,7 @@ import NextLink from 'next/link'
 
 import { GridItemProps, WorkGridItemProps } from '../../../shared/types'
 
-export const GridItem = ({
+export const GridElement = ({
   children,
   href,
   title,
@@ -17,9 +17,6 @@ export const GridItem = ({
         src={thumbnail}
         alt={title}
         className="grid-item-thumbnail"
-        placeholder="blur"
-        loading="lazy"
-        blurDataURL={title}
         width={300}
         height={300}
         style={{
@@ -35,23 +32,23 @@ export const GridItem = ({
   </LinkBox>
 )
 
-export const WorkGridItem = ({
+export const GridItem = ({
   children,
   id,
   title,
-  thumbnail
+  thumbnail,
+  content
 }: WorkGridItemProps) => (
-  <NextLink href={`/works/${id}`}>
+  <NextLink href={`/${content}/${id}`}>
     <LinkBox cursor="pointer">
       <Flex w="100%" direction="column" align="center">
         <Image
           src={thumbnail}
           alt={title}
           className="grid-item-thumbnail"
-          placeholder="blur"
-          blurDataURL={title}
           width={300}
           height={300}
+          priority
           style={{
             width: 'auto',
             height: 'auto'

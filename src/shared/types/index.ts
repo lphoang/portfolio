@@ -29,9 +29,41 @@ export type GridItemProps = {
 
 export type WorkGridItemProps = Omit<GridItemProps, 'href'> & {
   id: string
+  content: 'works' | 'posts'
 }
 
 export type LayoutProps = {
   title: string
   children: JSX.Element | string
+}
+
+export type ThumbnailType = {
+  url: string
+  width: number
+  height: number
+}
+
+export type WorkType = {
+  id: string
+  createdAt: string
+  updatedAt: string
+  title: string
+  description: string
+  thumbnail: ThumbnailType
+}
+
+export type GetWorks = {
+  contents: WorkType[]
+  totalCount: number
+  offset: number
+  limit: number
+}
+
+export type PostType = WorkType
+
+export type GetPosts = {
+  contents: PostType[]
+  totalCount: number
+  offset: number
+  limit: number
 }
