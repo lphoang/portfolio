@@ -2,11 +2,21 @@ import { Container, Heading, SimpleGrid } from '@chakra-ui/react'
 import { NextPage } from 'next'
 
 import { Section } from '../../components/Section'
-import { WorkGridItem } from '../../components/common/GridItems'
+import { GridItem } from '../../components/common/GridItems'
+import { Loading } from '../../components/common/Loading'
 import { Layout } from '../../components/layouts/Layout'
+import { DEFAULT_WORKS_VALUE } from '../../shared/const/works'
+import { useFetchData } from '../../shared/hooks/useFetchData'
+import { GetWorks } from '../../shared/types'
 
 const Works: NextPage<unknown> = () => {
-  const randomImageUrl = '/images/works.jpg'
+  const {
+    data: { contents }
+  } = useFetchData<GetWorks>({
+    defaultValue: DEFAULT_WORKS_VALUE,
+    content: 'works'
+  })
+
   return (
     <Layout title="Works">
       <Container>
@@ -15,36 +25,22 @@ const Works: NextPage<unknown> = () => {
         </Heading>
 
         <SimpleGrid minChildWidth="210px" spacing="40px">
-          <Section>
-            <WorkGridItem
-              id="first-work"
-              title="My First Work"
-              thumbnail={randomImageUrl}
-            >
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-              Reprehenderit accusantium unde voluptatem dolorum?
-            </WorkGridItem>
-          </Section>
-          <Section delay="0.1">
-            <WorkGridItem
-              id="second-work"
-              title="My Second Work"
-              thumbnail={randomImageUrl}
-            >
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-              Reprehenderit accusantium unde voluptatem dolorum?
-            </WorkGridItem>
-          </Section>
-          <Section delay="0.2">
-            <WorkGridItem
-              id="third-work"
-              title="My Third Work"
-              thumbnail={randomImageUrl}
-            >
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-              Reprehenderit accusantium unde voluptatem dolorum?
-            </WorkGridItem>
-          </Section>
+          {contents.length > 0 ? (
+            contents.map((work, index) => (
+              <Section key={work.id} delay={(index * 0.1).toString()}>
+                <GridItem
+                  id={work.id}
+                  title={work.title}
+                  content="works"
+                  thumbnail={work.thumbnail.url}
+                >
+                  {work.description}
+                </GridItem>
+              </Section>
+            ))
+          ) : (
+            <Loading />
+          )}
         </SimpleGrid>
       </Container>
     </Layout>

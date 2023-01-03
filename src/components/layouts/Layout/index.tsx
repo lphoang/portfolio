@@ -29,7 +29,7 @@ export const Layout = ({ children, title }: LayoutProps) => {
       <>
         {title && (
           <Head>
-            <title>{title} - Le Phuoc Hoang</title>
+            <title>{`${title} - Le Phuoc Hoang`}</title>
           </Head>
         )}
         {children}
