@@ -45,11 +45,17 @@ export type ThumbnailType = {
 
 export type WorkType = {
   id: string
-  createdAt: string
-  updatedAt: string
+  createdAt?: string
+  updatedAt?: string
   title: string
   description: string
-  thumbnail: ThumbnailType
+  platform: string
+  url?: string
+  stack: string
+  firstThumbnail: ThumbnailType
+  secondThumbnail: ThumbnailType
+  thirdThumbnail?: ThumbnailType
+  videoUrl?: string
 }
 
 export type GetWorks = {
@@ -59,7 +65,15 @@ export type GetWorks = {
   limit: number
 }
 
-export type PostType = WorkType
+export type PostType = {
+  id: string
+  createdAt?: string
+  updatedAt?: string
+  title: string
+  body: string
+  thumbnail: ThumbnailType
+  description: string
+}
 
 export type GetPosts = {
   contents: PostType[]

@@ -4,7 +4,10 @@ import {
   Button,
   Container,
   Heading,
+  Icon,
   Image,
+  List,
+  ListItem,
   useColorModeValue
 } from '@chakra-ui/react'
 import { NextPage } from 'next'
@@ -16,6 +19,7 @@ import { Paragraph } from '../components/common/Paragraph'
 import { Layout } from '../components/layouts/Layout'
 import { AddictionData } from '../shared/const/addiction'
 import { BioData } from '../shared/const/bio'
+import { SocialMediaData } from '../shared/const/media'
 
 const Home: NextPage<unknown> = () => {
   return (
@@ -69,16 +73,10 @@ const Home: NextPage<unknown> = () => {
             Works
           </Heading>
           <Paragraph>
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Deleniti,
-            quam. Non dignissimos, dolorum esse aperiam impedit illo voluptate
-            placeat quia quod quisquam ut voluptas earum accusamus hic
-            excepturi, animi laboriosam. Architecto qui ex facilis ea itaque
-            aperiam odio, repellat iste distinctio ut minima ducimus? Nesciunt
-            labore repudiandae ipsa modi neque. Lorem, ipsum dolor sit amet
-            consectetur adipisicing elit. Sunt possimus in voluptas, aliquid cum
-            asperiores laboriosam consectetur cupiditate quam similique hic
-            omnis, ducimus voluptatem cumque neque quisquam natus sapiente
-            incidunt.
+            I am a Backend Developer with nearly one year experience of
+            full-stack experience designing, enhancing, and maintaining Java web
+            applications. I also do Frontend libraries or frameworks such as
+            ReactJS, NextJS,...
           </Paragraph>
           <Box display="flex" justifyContent="center" my={4}>
             <Link href="/works">
@@ -113,6 +111,27 @@ const Home: NextPage<unknown> = () => {
               </BioSection>
             ))}
           </Box>
+        </Section>
+
+        <Section delay="0.4">
+          <Heading as="h3" variant="section-title">
+            Connect me
+          </Heading>
+          <List>
+            {SocialMediaData.map(media => (
+              <ListItem key={media.url}>
+                <Link href={media.url} target="_blank">
+                  <Button
+                    variant="ghost"
+                    colorScheme="teal"
+                    leftIcon={<Icon as={media.icon} />}
+                  >
+                    {media.title}
+                  </Button>
+                </Link>
+              </ListItem>
+            ))}
+          </List>
         </Section>
       </Container>
     </Layout>

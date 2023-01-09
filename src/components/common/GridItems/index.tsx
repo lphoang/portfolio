@@ -1,4 +1,10 @@
-import { Flex, LinkBox, LinkOverlay, Text } from '@chakra-ui/react'
+import {
+  Flex,
+  LinkBox,
+  LinkOverlay,
+  Text,
+  useColorModeValue
+} from '@chakra-ui/react'
 import { Global } from '@emotion/react'
 import Image from 'next/image'
 import NextLink from 'next/link'
@@ -17,12 +23,8 @@ export const GridElement = ({
         src={thumbnail}
         alt={title}
         className="grid-item-thumbnail"
-        width={300}
-        height={300}
-        style={{
-          width: 'auto',
-          height: 'auto'
-        }}
+        width={200}
+        height={200}
       />
       <LinkOverlay href={href} target="_blank">
         <Text mt={2}>{title}</Text>
@@ -46,18 +48,23 @@ export const GridItem = ({
           src={thumbnail}
           alt={title}
           className="grid-item-thumbnail"
-          width={300}
-          height={300}
+          width={200}
+          height={200}
           priority
-          style={{
-            width: 'auto',
-            height: 'auto'
-          }}
         />
-        <Text mt={2} fontSize={20}>
+        <Text
+          mt={2}
+          fontSize={20}
+          color={useColorModeValue('green.600', 'green.300')}
+        >
           {title}
         </Text>
-        <Text fontSize={14} textAlign="center">
+        <Text
+          fontSize={14}
+          textAlign="center"
+          className="grid-item-description"
+          title={String(children)}
+        >
           {children}
         </Text>
       </Flex>
@@ -70,6 +77,16 @@ export const GridItemStyle = () => (
     styles={`
       .grid-item-thumbnail {
         border-radius: 12px;
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+      }
+      .grid-item-description {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
     `}
   />
