@@ -11,23 +11,28 @@ const styles = {
 
 const components = {
   Heading: {
-    variants: {
-      'section-title': {
+    variants:
+    {
+      'section-title': (props: StyleFunctionProps) => ({
         textDecoration: 'underline',
         fontSize: 20,
         textUnderlineOffset: 6,
-        textDecorationColor: '#525252',
+        textColor: mode('#037c6e', '#4fb9af')(props),
+        textDecorationColor: mode('#037c6e', '#4fb9af')(props),
         textDecorationThickness: 4,
         marginTop: 3,
         marginBottom: 4
       }
+      )
     }
   },
-  Link: {
-    baseStyle: (props: StyleFunctionProps) => ({
-      color: mode('#3d7aed', '#ff63c3')(props),
-      textUnderlineOffset: 3
-    })
+  Button: {
+    variants: {
+      'link': (props: StyleFunctionProps) => ({
+        color: mode('#3d7aed', '#ff63c3')(props),
+        textUnderlineOffset: 3
+      })
+    }
   }
 }
 

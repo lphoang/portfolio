@@ -20,7 +20,7 @@ const Works: NextPage<unknown> = () => {
   return (
     <Layout title="Works">
       <Container>
-        <Heading as="h3" fontSize={20} my={10}>
+        <Heading as="h4" fontSize={20} my={10}>
           Works
         </Heading>
 
@@ -32,7 +32,7 @@ const Works: NextPage<unknown> = () => {
                   id={work.id}
                   title={work.title}
                   content="works"
-                  thumbnail={work.thumbnail.url}
+                  thumbnail={work.firstThumbnail.url}
                 >
                   {work.description}
                 </GridItem>
