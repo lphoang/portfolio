@@ -1,4 +1,6 @@
-import { type Variant, colorAt } from './model'
+import type { Era } from '@/lib/era'
+
+import { type Variant, colorAtEra } from './model'
 
 /**
  * Baked figure: cubes grouped by color. `cells` is a flat list of grid indices
@@ -12,7 +14,8 @@ export type FigureData = {
 
 // The box the model fits in, in model units.
 const ORIGIN: [number, number, number] = [-9.6, -0.2, -7.6]
-const SIZE = [19.2, 25.8, 16.4]
+// Tall enough for the 1889 top hat.
+const SIZE = [19.2, 30.4, 16.4]
 
 const NEIGHBOURS = [
   [1, 0, 0],
@@ -24,7 +27,7 @@ const NEIGHBOURS = [
 ]
 
 // Samples the shape model on a grid of cubes and keeps only the ones you can see.
-export function voxelize(variant: Variant, step: number): FigureData {
+export function voxelize(variant: Variant, era: Era, step: number): FigureData {
   const [nx, ny, nz] = SIZE.map(size => Math.ceil(size / step))
   const colors: string[] = []
   const colorIndex = new Map<string, number>()
@@ -42,8 +45,9 @@ export function voxelize(variant: Variant, step: number): FigureData {
   for (let i = 0; i < nx; i++)
     for (let j = 0; j < ny; j++)
       for (let k = 0; k < nz; k++) {
-        const color = colorAt(
+        const color = colorAtEra(
           variant,
+          era,
           ORIGIN[0] + (i + 0.5) * step,
           ORIGIN[1] + (j + 0.5) * step,
           ORIGIN[2] + (k + 0.5) * step,
