@@ -9,7 +9,7 @@ export function AppCard({ app, href }: Props) {
     <>
       <div className="flex items-center justify-between gap-3">
         <h3 className="font-display text-lg font-bold">{app.name}</h3>
-        <span className="seal shrink-0 rounded bg-badge px-2 py-0.5 font-label text-[10px] text-badge-ink">
+        <span className="shrink-0 rounded bg-badge px-2 py-0.5 font-label text-[10px] text-badge-ink">
           {app.status}
         </span>
       </div>

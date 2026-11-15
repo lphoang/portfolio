@@ -4,6 +4,25 @@ Date: 2026-11-15
 Status: approved 2026-11-15
 Builds on: `2026-11-15-portfolio-refresh-design.md` (the live site at leph.dev)
 
+## Update: Vibe and Dev modes
+
+Later the same day the owner kept the Starry Night sky but replaced everything else about 1889:
+
+- **1889 became Vibe mode**: the old Game Boy Mint dark theme on the swirling sky, cypress and village.
+  - Mint cards with a 1px border, Space Grotesk headings, Inter text, Silkscreen labels, Doto numbers.
+  - The 3D figure wears its original outfit (headset, tee, olive glasses).
+  - The haze behind the text is a little stronger (0.82) so the old muted green stays readable over a star.
+- **Terminal became Dev mode**, unchanged.
+- The toggle reads **Vibe | Dev**.
+- The craft and the curtain are gone. Switching plays a **pixel flip** (`src/lib/pixelFlip.ts`):
+  - square tiles in the new mode's colors turn over in a wave from the top-left and cover the page;
+  - the mode changes underneath;
+  - the tiles turn away in the same wave.
+  - With reduced motion the mode switches at once.
+- In code the modes are still called eras: `data-era` is `vibe` or `dev`.
+
+The sections below describe the original 1889 design. Where they disagree with this update, the update wins.
+
 ## Why
 
 The owner doesn't like the light theme. He wants the site to have more personality: two very different "eras" he can flip between, with a fun transition. One is inspired by Van Gogh's *The Starry Night* (painted in 1889) and feels like the 1800s. The other is a dark, colorful-green computer terminal. The bio intro is also out of date.

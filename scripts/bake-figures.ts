@@ -1,4 +1,4 @@
-// Bakes the 3D figure for every page and era into public/figures/<variant>-<era>.json.
+// Bakes the 3D figure for every page and mode into public/figures/<variant>-<era>.json.
 // Run with `npm run figures` after changing src/figure/model.ts.
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { gzipSync } from 'node:zlib'
@@ -9,7 +9,7 @@ import type { Era } from '../src/lib/era'
 
 const STEP = 0.25 // 4x detail
 const VARIANTS: Variant[] = ['dev', 'player', 'creator']
-const ERAS: Era[] = ['starry', 'terminal']
+const ERAS: Era[] = ['vibe', 'dev']
 
 mkdirSync('public/figures', { recursive: true })
 for (const variant of VARIANTS)

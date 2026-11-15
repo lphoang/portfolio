@@ -14,24 +14,24 @@ import {
   shouldAnimate
 } from './motion'
 
-// The haze opacity per era, read from the stylesheet so the test follows the CSS.
+// The haze opacity per mode, read from the stylesheet so the test follows the CSS.
 const css = readFileSync('src/app/globals.css', 'utf8')
-const hazeOf = (era: 'starry' | 'terminal') =>
+const hazeOf = (era: 'vibe' | 'dev') =>
   Number(
     css.match(
       new RegExp(`\\[data-era='${era}'\\][^}]*--haze:\\s*([\\d.]+)`)
     )?.[1]
   )
 
-test('a background animates only in its own era, visible, without reduced motion', () => {
+test('a background animates only in its own mode, visible, without reduced motion', () => {
   const base = {
-    era: 'starry',
-    own: 'starry',
+    era: 'vibe',
+    own: 'vibe',
     hidden: false,
     reducedMotion: false
   } as const
   expect(shouldAnimate(base)).toBe(true)
-  expect(shouldAnimate({ ...base, era: 'terminal' })).toBe(false)
+  expect(shouldAnimate({ ...base, era: 'dev' })).toBe(false)
   expect(shouldAnimate({ ...base, hidden: true })).toBe(false)
   expect(shouldAnimate({ ...base, reducedMotion: true })).toBe(false)
 })
@@ -48,13 +48,13 @@ test('the swirl field gives unit vectors', () => {
     }
 })
 
-test('1889 text over the haze stays readable at its worst spots', () => {
-  const v = eraVars(css, 'starry')
-  const haze = hazeOf('starry')
+test('vibe text over the haze stays readable at its worst spots in the sky', () => {
+  const v = eraVars(css, 'vibe')
+  const haze = hazeOf('vibe')
   expect(haze).toBeGreaterThan(0)
   // The haze (the sky color at --haze) sits over the brightest stroke or a star's core.
   const behind = [...BLUES, STAR_CORE].map(color => blend(v.bg, color, haze))
-  for (const text of ['ink', 'muted', 'label'])
+  for (const text of ['ink', 'muted', 'accent', 'label'])
     for (const bg of behind)
       expect(contrastRatio(v[text], bg)).toBeGreaterThanOrEqual(4.5)
 })
@@ -64,9 +64,9 @@ test('blend mixes two colors', () => {
   expect(blend('#0a1a3f', '#ffffff', 1)).toBe('#0a1a3f')
 })
 
-test('terminal text over the haze stays readable where rain characters overlap', () => {
-  const v = eraVars(css, 'terminal')
-  const haze = hazeOf('terminal')
+test('dev text over the haze stays readable where rain characters overlap', () => {
+  const v = eraVars(css, 'dev')
+  const haze = hazeOf('dev')
   expect(haze).toBeGreaterThan(0)
   // Slow columns overlap from frame to frame, so a pixel can build up to about
   // 1.7 glyphs' worth of color.

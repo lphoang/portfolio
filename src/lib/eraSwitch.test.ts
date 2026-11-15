@@ -1,80 +1,47 @@
 import type { Era } from './era'
-import { createEraSwitcher, transitionMode } from './eraSwitch'
+import { createEraSwitcher } from './eraSwitch'
 
-test('transition mode', () => {
-  expect(transitionMode({ reducedMotion: true, canTransition: true })).toBe(
-    'instant'
-  )
-  expect(transitionMode({ reducedMotion: false, canTransition: false })).toBe(
-    'flyover'
-  )
-  expect(transitionMode({ reducedMotion: false, canTransition: true })).toBe(
-    'curtain'
-  )
-})
-
-function setup(
-  opts: { reducedMotion?: boolean; transition?: 'ok' | 'fails' | 'none' } = {}
-) {
-  const applied: Era[] = []
-  const craft: string[] = []
+function setup(opts: { reducedMotion?: boolean; flip?: 'ok' | 'fails' } = {}) {
+  const events: string[] = []
   let finish: () => void = () => {}
-  const startViewTransition =
-    opts.transition === 'none'
-      ? undefined
-      : (update: () => void) => {
-          update()
-          const finished =
-            opts.transition === 'fails'
-              ? Promise.reject(new Error('skipped'))
-              : new Promise<void>(resolve => (finish = resolve))
-          return { finished }
-        }
   const switchEra = createEraSwitcher({
-    apply: era => applied.push(era),
-    startViewTransition,
-    showCraft: (era, position) => craft.push(`${era}:${position}`),
-    reducedMotion: () => opts.reducedMotion ?? false,
-    wait: async () => {}
+    apply: (era: Era) => events.push(`apply ${era}`),
+    flip: (era, onCovered) => {
+      events.push(`flip ${era}`)
+      if (opts.flip === 'fails') return Promise.reject(new Error('no canvas'))
+      onCovered()
+      return new Promise<void>(resolve => (finish = resolve))
+    },
+    reducedMotion: () => opts.reducedMotion ?? false
   })
-  return { switchEra, applied, craft, finish: () => finish() }
+  return { switchEra, events, finish: () => finish() }
 }
 
-test('curtain: craft starts left, ends right, era applied inside the transition, craft hidden after', async () => {
+test('the mode switches while the tiles cover the page', async () => {
   const s = setup()
-  const done = s.switchEra('starry')
+  const done = s.switchEra('vibe')
   s.finish()
   await done
-  expect(s.applied).toEqual(['starry'])
-  expect(s.craft).toEqual(['starry:left', 'starry:right', 'starry:hidden'])
+  expect(s.events).toEqual(['flip vibe', 'apply vibe'])
 })
 
-test('a second click during a transition is ignored', async () => {
+test('a second click during a flip is ignored', async () => {
   const s = setup()
-  const first = s.switchEra('starry')
-  const second = s.switchEra('terminal')
+  const first = s.switchEra('vibe')
+  const second = s.switchEra('dev')
   s.finish()
   await Promise.all([first, second])
-  expect(s.applied).toEqual(['starry'])
+  expect(s.events).toEqual(['flip vibe', 'apply vibe'])
 })
 
-test('a failed transition still applies the era and hides the craft', async () => {
-  const s = setup({ transition: 'fails' })
-  await expect(s.switchEra('starry')).resolves.toBeUndefined()
-  expect(s.applied).toEqual(['starry'])
-  expect(s.craft.at(-1)).toBe('starry:hidden')
+test('a failed flip still switches the mode', async () => {
+  const s = setup({ flip: 'fails' })
+  await expect(s.switchEra('vibe')).resolves.toBeUndefined()
+  expect(s.events).toEqual(['flip vibe', 'apply vibe'])
 })
 
-test('reduced motion: apply only, no craft', async () => {
+test('with reduced motion the mode switches at once, without tiles', async () => {
   const s = setup({ reducedMotion: true })
-  await s.switchEra('terminal')
-  expect(s.applied).toEqual(['terminal'])
-  expect(s.craft).toEqual([])
-})
-
-test('no view transitions: apply, then the craft flies over and hides', async () => {
-  const s = setup({ transition: 'none' })
-  await s.switchEra('starry')
-  expect(s.applied).toEqual(['starry'])
-  expect(s.craft).toEqual(['starry:fly', 'starry:hidden'])
+  await s.switchEra('dev')
+  expect(s.events).toEqual(['apply dev'])
 })

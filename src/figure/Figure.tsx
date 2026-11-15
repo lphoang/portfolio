@@ -40,8 +40,8 @@ function useInView<T extends Element>() {
 type Props = { variant: Variant; label: string }
 
 // A fixed-size square, so nothing jumps while the figure loads (or if WebGL is missing).
-// A soft glow sits behind it (moonlight in 1889, green on the terminal): the dark hair
-// and clothes would otherwise blend into the dark background.
+// A soft glow sits behind it (pale green in Vibe mode, bright green in Dev mode): the
+// dark hair and clothes would otherwise blend into the dark background.
 export function Figure({ variant, label }: Props) {
   const { ref, inView } = useInView<HTMLDivElement>()
   return (

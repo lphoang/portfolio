@@ -14,8 +14,7 @@ export type FigureData = {
 
 // The box the model fits in, in model units.
 const ORIGIN: [number, number, number] = [-9.6, -0.2, -7.6]
-// Tall enough for the 1889 top hat.
-const SIZE = [19.2, 30.4, 16.4]
+const SIZE = [19.2, 25.8, 16.4]
 
 const NEIGHBOURS = [
   [1, 0, 0],

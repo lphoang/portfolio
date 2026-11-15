@@ -1,13 +1,14 @@
 import type { Metadata } from 'next'
 import {
+  Doto,
   IBM_Plex_Mono,
+  Inter,
   JetBrains_Mono,
-  Playfair_Display,
-  Special_Elite,
+  Silkscreen,
+  Space_Grotesk,
   VT323
 } from 'next/font/google'
 
-import { Craft } from '@/components/Craft'
 import { EraFavicon } from '@/components/EraFavicon'
 import { Navbar } from '@/components/Navbar'
 import { Silhouettes } from '@/components/backgrounds/Silhouettes'
@@ -17,7 +18,7 @@ import { eraScript } from '@/lib/era'
 
 import './globals.css'
 
-// Terminal era
+// Dev mode
 const vt323 = VT323({
   subsets: ['latin'],
   weight: '400',
@@ -33,19 +34,29 @@ const jetbrains = JetBrains_Mono({
   weight: '800',
   variable: '--font-jetbrains'
 })
-// 1889 era
-const playfair = Playfair_Display({
+// Vibe mode. Dev is the default mode, so these load when needed.
+const spaceGrotesk = Space_Grotesk({
   subsets: ['latin', 'vietnamese'],
-  weight: ['400', '600'],
-  style: ['normal', 'italic'],
-  variable: '--font-playfair',
-  // The terminal is the default era, so 1889's fonts load when needed.
+  weight: ['500', '700'],
+  variable: '--font-space-grotesk',
   preload: false
 })
-const specialElite = Special_Elite({
+const inter = Inter({
+  subsets: ['latin', 'vietnamese'],
+  weight: ['400', '600'],
+  variable: '--font-inter',
+  preload: false
+})
+const silkscreen = Silkscreen({
   subsets: ['latin'],
   weight: '400',
-  variable: '--font-special-elite',
+  variable: '--font-silkscreen',
+  preload: false
+})
+const doto = Doto({
+  subsets: ['latin'],
+  weight: '900',
+  variable: '--font-doto',
   preload: false
 })
 
@@ -60,15 +71,21 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const fonts = [vt323, plexMono, jetbrains, playfair, specialElite].map(
-    f => f.variable
-  )
+  const fonts = [
+    vt323,
+    plexMono,
+    jetbrains,
+    spaceGrotesk,
+    inter,
+    silkscreen,
+    doto
+  ].map(f => f.variable)
   return (
-    // data-era is the default for the first paint (and without JS); the head script
-    // switches it to the saved era before paint.
+    // data-era is the default mode for the first paint (and without JS); the head
+    // script switches it to the saved mode before paint.
     <html
       lang="en"
-      data-era="terminal"
+      data-era="dev"
       className={fonts.join(' ')}
       suppressHydrationWarning
     >
@@ -76,35 +93,15 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: eraScript }} />
       </head>
       <body className="min-h-dvh antialiased">
-        {/* Rough, deckled edges for the 1889 paper cards (see .card in globals.css). */}
-        <svg width="0" height="0" className="absolute" aria-hidden>
-          <filter id="rough">
-            <feTurbulence
-              type="fractalNoise"
-              baseFrequency="0.035"
-              numOctaves={3}
-              seed={4}
-              result="noise"
-            />
-            <feDisplacementMap
-              in="SourceGraphic"
-              in2="noise"
-              scale={7}
-              xChannelSelector="R"
-              yChannelSelector="G"
-            />
-          </filter>
-        </svg>
         <TerminalRain />
         <StarrySky />
         <Silhouettes />
         <div className="text-haze" aria-hidden />
-        <div className="crt terminal-only" aria-hidden />
+        <div className="crt dev-only" aria-hidden />
         <Navbar />
         <main className="relative z-[4] mx-auto w-full max-w-3xl px-4 pt-6 pb-16 sm:px-6">
           {children}
         </main>
-        <Craft />
         <EraFavicon />
       </body>
     </html>

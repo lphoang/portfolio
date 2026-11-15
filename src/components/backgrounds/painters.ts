@@ -17,7 +17,7 @@ export type Painter = {
 
 const pick = <T>(list: T[]) => list[Math.floor(Math.random() * list.length)]
 
-// ---------- 1889: brush strokes flowing around swirls, glowing stars, the moon ----------
+// ---------- Vibe: brush strokes flowing around swirls, glowing stars, the moon ----------
 
 type Stroke = { x: number; y: number; life: number; color: string }
 

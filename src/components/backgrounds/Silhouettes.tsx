@@ -1,7 +1,7 @@
-// The cypress on the left and the sleeping village along the bottom (1889 only).
+// The cypress on the left and the sleeping village along the bottom (Vibe mode only).
 export function Silhouettes() {
   return (
-    <div className="starry-only" aria-hidden>
+    <div className="vibe-only" aria-hidden>
       <svg
         className="cypress"
         viewBox="0 0 120 520"

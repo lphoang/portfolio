@@ -14,10 +14,10 @@ export function contrastRatio(a: string, b: string): number {
   return (hi + 0.05) / (lo + 0.05)
 }
 
-// Text color on background color, per era. Every pair must reach AA (4.5:1).
+// Text color on background color, per mode. Every pair must reach AA (4.5:1).
 // Text pairs need 4.5:1; the focus ring is a UI part and needs 3:1.
 const PAIRS: Record<Era, [fg: string, bg: string, min?: number][]> = {
-  terminal: [
+  dev: [
     ['ink', 'bg'],
     ['muted', 'bg'],
     ['accent', 'bg'],
@@ -30,34 +30,26 @@ const PAIRS: Record<Era, [fg: string, bg: string, min?: number][]> = {
     ['badge-ink', 'badge'],
     ['focus', 'bg', 3]
   ],
-  starry: [
+  vibe: [
     ['ink', 'bg'],
     ['muted', 'bg'],
     ['accent', 'bg'],
     ['label', 'bg'],
-    ['paper-ink', 'paper'],
-    ['paper-muted', 'paper'],
-    ['date', 'paper'],
-    ['prussian', 'paper'],
-    ['seal-ink', 'seal'],
+    ['ink', 'panel'],
+    ['muted', 'panel'],
+    ['accent', 'panel'],
+    ['num', 'panel'],
     ['badge-ink', 'badge'],
-    // The paper darkens toward its rim, where dates and titles can sit,
-    // and the wax seal is lighter at its highlight.
-    ['date', 'paper-rim'],
-    ['paper-ink', 'paper-rim'],
-    ['paper-muted', 'paper-rim'],
-    ['prussian', 'paper-rim'],
-    ['seal-ink', 'seal-light'],
     ['focus', 'bg', 3]
   ]
 }
 
 const BLOCKS: Record<Era, RegExp> = {
-  terminal: /\[data-era=['"]terminal['"]\]\s*\{([^}]*)\}/,
-  starry: /\[data-era=['"]starry['"]\]\s*\{([^}]*)\}/
+  dev: /\[data-era=['"]dev['"]\]\s*\{([^}]*)\}/,
+  vibe: /\[data-era=['"]vibe['"]\]\s*\{([^}]*)\}/
 }
 
-// The #rrggbb color variables of one era, read from the stylesheet.
+// The #rrggbb color variables of one mode, read from the stylesheet.
 export function eraVars(css: string, era: Era): Record<string, string> {
   const block = css.match(BLOCKS[era])?.[1] ?? ''
   return Object.fromEntries(

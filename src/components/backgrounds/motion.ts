@@ -11,7 +11,7 @@ export function shouldAnimate(input: {
   return input.era === input.own && !input.hidden && !input.reducedMotion
 }
 
-// ---------- 1889: the swirling night sky ----------
+// ---------- Vibe: the swirling night sky ----------
 
 // Star positions as fractions of the viewport, and their radius in px.
 // Kept out of the middle text column (x 0.3–0.7) below the top 20%.
