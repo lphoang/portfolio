@@ -1,3 +1,65 @@
+import { AppCard } from '@/components/AppCard'
+import { SectionLabel } from '@/components/SectionLabel'
+import { Timeline } from '@/components/Timeline'
+import { apps } from '@/data/apps'
+import { profile } from '@/data/profile'
+import { education, work } from '@/data/work'
+
 export default function Home() {
-  return <h1>Le Phuoc Hoang</h1>
+  return (
+    <div className="space-y-10">
+      <section className="flex flex-col items-center text-center">
+        {/* The 3D figure goes here. */}
+        <h1 className="font-display text-4xl font-bold">{profile.name}</h1>
+        <p className="mt-2 text-muted">{profile.tagline}</p>
+        <p className="mt-4 max-w-xl">{profile.intro}</p>
+      </section>
+
+      <section>
+        <SectionLabel>work</SectionLabel>
+        <Timeline jobs={work} born={profile.born} />
+      </section>
+
+      <section>
+        <SectionLabel>education</SectionLabel>
+        <div className="card grid gap-1 p-4 sm:grid-cols-[7.5rem_1fr]">
+          <span className="pt-1 font-label text-[10px] text-muted">{education.period}</span>
+          <div>
+            <h3 className="font-display font-bold">{education.school}</h3>
+            <p className="text-sm">{education.degree}</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <SectionLabel>building</SectionLabel>
+        <AppCard app={apps[0]} href="/apps" />
+      </section>
+
+      <section>
+        <SectionLabel>i ♥</SectionLabel>
+        <ul className="flex flex-wrap gap-2">
+          {profile.hobbies.map(hobby => (
+            <li key={hobby} className="card px-3 py-1.5 text-sm">
+              {hobby}
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section>
+        <SectionLabel>connect</SectionLabel>
+        <ul className="space-y-1">
+          {profile.links.map(link => (
+            <li key={link.url}>
+              <a href={link.url} target="_blank" rel="noreferrer" className="hover:text-accent">
+                <span className="font-label text-[10px] text-muted">{link.label}</span>{' '}
+                <span className="underline underline-offset-4">{link.text}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </div>
+  )
 }
