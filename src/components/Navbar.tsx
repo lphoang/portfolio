@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
+import { EraToggle } from './EraToggle'
 import { NavLinks } from './NavLinks'
-import { ThemeToggle } from './ThemeToggle'
 
 export function Navbar() {
   return (
@@ -14,7 +14,7 @@ export function Navbar() {
           leph
         </Link>
         <NavLinks />
-        <ThemeToggle />
+        <EraToggle />
       </nav>
     </header>
   )

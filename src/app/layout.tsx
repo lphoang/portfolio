@@ -7,6 +7,7 @@ import {
   VT323
 } from 'next/font/google'
 
+import { Craft } from '@/components/Craft'
 import { Navbar } from '@/components/Navbar'
 import { eraScript } from '@/lib/era'
 
@@ -66,6 +67,7 @@ export default function RootLayout({
         <main className="mx-auto w-full max-w-3xl px-4 pt-6 pb-16 sm:px-6">
           {children}
         </main>
+        <Craft />
       </body>
     </html>
   )

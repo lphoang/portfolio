@@ -200,6 +200,105 @@ body {
   color: var(--card-title);
 }
 
+/* ---------- era toggle ---------- */
+.era-toggle {
+  display: inline-flex;
+  overflow: hidden;
+  border-radius: 999px;
+  border: 1px solid var(--accent);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.era-toggle .seg {
+  padding: 4px 10px;
+}
+
+[data-era='starry'] .era-toggle {
+  border-color: var(--paper);
+}
+
+[data-era='terminal'] .era-toggle .seg-terminal {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+[data-era='starry'] .era-toggle .seg-starry {
+  background: var(--paper);
+  color: var(--prussian);
+}
+
+/* ---------- the craft and the curtain ---------- */
+.craft {
+  position: fixed;
+  top: 18vh;
+  z-index: 50;
+  display: none;
+  width: 220px;
+  height: 100px;
+  pointer-events: none;
+  view-transition-name: craft;
+}
+
+.craft svg {
+  width: 100%;
+  height: 100%;
+}
+
+.craft[data-craft='starry'] .craft-ship,
+.craft[data-craft='terminal'] .craft-airship {
+  display: none;
+}
+
+.craft-ship {
+  filter: drop-shadow(0 0 6px #39ff6a);
+}
+
+.craft[data-position='left'] {
+  display: block;
+  left: -260px;
+}
+
+.craft[data-position='right'] {
+  display: block;
+  left: calc(100vw + 40px);
+}
+
+/* Without View Transitions the craft just flies over the page. */
+.craft[data-position='fly'] {
+  display: block;
+  left: -260px;
+  animation: craft-fly 1.6s cubic-bezier(0.45, 0.05, 0.55, 0.95) forwards;
+}
+
+@keyframes craft-fly {
+  to {
+    left: calc(100vw + 40px);
+  }
+}
+
+::view-transition-group(craft) {
+  animation-duration: 1.6s;
+  animation-timing-function: cubic-bezier(0.45, 0.05, 0.55, 0.95);
+}
+
+::view-transition-old(root) {
+  animation: none;
+}
+
+::view-transition-new(root) {
+  animation: era-curtain 1.6s cubic-bezier(0.45, 0.05, 0.55, 0.95) both;
+}
+
+@keyframes era-curtain {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
 @keyframes blink {
   50% {
     opacity: 0;
