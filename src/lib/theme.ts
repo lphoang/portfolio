@@ -3,7 +3,10 @@ export type Theme = 'light' | 'dark'
 export const THEME_KEY = 'theme'
 
 // A saved choice wins; otherwise follow the system setting.
-export function resolveTheme(stored: string | null, systemDark: boolean): Theme {
+export function resolveTheme(
+  stored: string | null,
+  systemDark: boolean
+): Theme {
   if (stored === 'light' || stored === 'dark') return stored
   return systemDark ? 'dark' : 'light'
 }

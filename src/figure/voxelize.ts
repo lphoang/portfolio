@@ -31,7 +31,13 @@ export function voxelize(variant: Variant, step: number): FigureData {
   const grid = new Int16Array(nx * ny * nz).fill(-1)
   const index = (i: number, j: number, k: number) => (i * ny + j) * nz + k
   const isFilled = (i: number, j: number, k: number) =>
-    i >= 0 && j >= 0 && k >= 0 && i < nx && j < ny && k < nz && grid[index(i, j, k)] >= 0
+    i >= 0 &&
+    j >= 0 &&
+    k >= 0 &&
+    i < nx &&
+    j < ny &&
+    k < nz &&
+    grid[index(i, j, k)] >= 0
 
   for (let i = 0; i < nx; i++)
     for (let j = 0; j < ny; j++)
@@ -57,7 +63,9 @@ export function voxelize(variant: Variant, step: number): FigureData {
       for (let k = 0; k < nz; k++) {
         const c = grid[index(i, j, k)]
         if (c < 0) continue
-        const hidden = NEIGHBOURS.every(([di, dj, dk]) => isFilled(i + di, j + dj, k + dk))
+        const hidden = NEIGHBOURS.every(([di, dj, dk]) =>
+          isFilled(i + di, j + dj, k + dk)
+        )
         if (!hidden) cells[c].push(i, j, k)
       }
 

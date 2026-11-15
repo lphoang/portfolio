@@ -31,7 +31,10 @@ const channelsResponse = {
 }
 
 const playlistResponse = {
-  items: [{ contentDetails: { videoId: 'b' } }, { contentDetails: { videoId: 'a' } }]
+  items: [
+    { contentDetails: { videoId: 'b' } },
+    { contentDetails: { videoId: 'a' } }
+  ]
 }
 
 const video = (id: string, statistics: Record<string, string>) => ({
@@ -48,7 +51,12 @@ const videosResponse = {
   ]
 }
 
-type Responses = { channels?: unknown; playlist?: unknown; videos?: unknown; status?: number }
+type Responses = {
+  channels?: unknown
+  playlist?: unknown
+  videos?: unknown
+  status?: number
+}
 
 function fakeFetch(responses: Responses) {
   const calls: string[] = []
@@ -60,12 +68,18 @@ function fakeFetch(responses: Responses) {
       : url.pathname.endsWith('/playlistItems')
         ? responses.playlist
         : responses.videos
-    return new Response(JSON.stringify(body ?? {}), { status: responses.status ?? 200 })
+    return new Response(JSON.stringify(body ?? {}), {
+      status: responses.status ?? 200
+    })
   }) as typeof fetch
   return { impl, calls }
 }
 
-const ok = { channels: channelsResponse, playlist: playlistResponse, videos: videosResponse }
+const ok = {
+  channels: channelsResponse,
+  playlist: playlistResponse,
+  videos: videosResponse
+}
 
 afterEach(() => {
   vi.unstubAllEnvs()
@@ -96,13 +110,23 @@ test('returns totals and the latest uploads in playlist order', async () => {
 test('hidden subscriber count becomes null', async () => {
   const hidden = structuredClone(channelsResponse)
   hidden.items[0].statistics.hiddenSubscriberCount = true
-  const stats = await getChannelStats(channel, 'key', fakeFetch({ ...ok, channels: hidden }).impl)
+  const stats = await getChannelStats(
+    channel,
+    'key',
+    fakeFetch({ ...ok, channels: hidden }).impl
+  )
   expect(stats!.subscribers).toBeNull()
 })
 
 test('missing likeCount and commentCount become null', async () => {
-  const videos = { items: [video('b', { viewCount: '300' }), video('a', { viewCount: '100' })] }
-  const stats = await getChannelStats(channel, 'key', fakeFetch({ ...ok, videos }).impl)
+  const videos = {
+    items: [video('b', { viewCount: '300' }), video('a', { viewCount: '100' })]
+  }
+  const stats = await getChannelStats(
+    channel,
+    'key',
+    fakeFetch({ ...ok, videos }).impl
+  )
   expect(stats!.latest[0].likes).toBeNull()
   expect(stats!.latest[0].comments).toBeNull()
 })
@@ -122,7 +146,9 @@ test('missing key returns null without calling fetch', async () => {
 
 test('a non-OK response returns null', async () => {
   vi.spyOn(console, 'error').mockImplementation(() => {})
-  expect(await getChannelStats(channel, 'key', fakeFetch({ status: 403 }).impl)).toBeNull()
+  expect(
+    await getChannelStats(channel, 'key', fakeFetch({ status: 403 }).impl)
+  ).toBeNull()
 })
 
 test('a thrown network error returns null', async () => {
@@ -159,5 +185,7 @@ test('a failure during the production build still returns null', async () => {
   vi.spyOn(console, 'error').mockImplementation(() => {})
   vi.stubEnv('NODE_ENV', 'production')
   vi.stubEnv('NEXT_PHASE', 'phase-production-build')
-  expect(await getChannelStats(channel, 'key', fakeFetch({ status: 403 }).impl)).toBeNull()
+  expect(
+    await getChannelStats(channel, 'key', fakeFetch({ status: 403 }).impl)
+  ).toBeNull()
 })

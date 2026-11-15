@@ -6,7 +6,9 @@ import { work } from '@/data/work'
 import { Timeline } from './Timeline'
 
 test('jobs render newest first and the birth line comes last', () => {
-  const html = renderToStaticMarkup(<Timeline jobs={work} born={profile.born} />)
+  const html = renderToStaticMarkup(
+    <Timeline jobs={work} born={profile.born} />
+  )
   const order = [
     'mgm technology partners Vietnam',
     'mesoneer',

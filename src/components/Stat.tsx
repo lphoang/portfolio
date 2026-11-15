@@ -9,7 +9,10 @@ export function Stat({ label, value }: Props) {
       {value === null ? (
         <div className="font-label text-sm leading-7 text-muted">hidden</div>
       ) : (
-        <div className="font-num text-2xl leading-7 text-num" title={formatFull(value)}>
+        <div
+          className="font-num text-2xl leading-7 text-num"
+          title={formatFull(value)}
+        >
           {formatCompact(value)}
         </div>
       )}

@@ -21,7 +21,11 @@ const silkscreen = Silkscreen({
   weight: '400',
   variable: '--font-silkscreen'
 })
-const doto = Doto({ subsets: ['latin'], weight: '900', variable: '--font-doto' })
+const doto = Doto({
+  subsets: ['latin'],
+  weight: '900',
+  variable: '--font-doto'
+})
 
 export const metadata: Metadata = {
   title: { default: 'Le Phuoc Hoang', template: '%s · Le Phuoc Hoang' },
@@ -30,7 +34,11 @@ export const metadata: Metadata = {
   icons: '/images/alien.svg'
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children
+}: {
+  children: React.ReactNode
+}) {
   const fonts = [spaceGrotesk, inter, silkscreen, doto].map(f => f.variable)
   return (
     <html lang="en" className={fonts.join(' ')} suppressHydrationWarning>

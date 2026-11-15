@@ -17,7 +17,10 @@ export function ChannelTeaser({ channel, stats }: Props) {
       <span className="font-display font-bold">{channel.title}</span>
       {subscribers !== null && (
         <span className="font-label text-[10px] text-muted">
-          <span className="font-num text-lg text-num" title={formatFull(subscribers)}>
+          <span
+            className="font-num text-lg text-num"
+            title={formatFull(subscribers)}
+          >
             {formatCompact(subscribers)}
           </span>{' '}
           subscribers

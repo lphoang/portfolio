@@ -44,13 +44,18 @@ type VideosResponse = {
   items?: {
     id: string
     snippet: { title: string; publishedAt: string }
-    statistics: { viewCount?: string; likeCount?: string; commentCount?: string }
+    statistics: {
+      viewCount?: string
+      likeCount?: string
+      commentCount?: string
+    }
   }[]
 }
 
 class YouTubeError extends Error {}
 
-const toNumber = (value?: string) => (value === undefined ? null : Number(value))
+const toNumber = (value?: string) =>
+  value === undefined ? null : Number(value)
 
 /**
  * Stats for one channel, or null when the dashboard should show its fallback.
@@ -66,7 +71,10 @@ export async function getChannelStats(
 ): Promise<ChannelStats | null> {
   if (!apiKey) return null
 
-  async function get<T>(path: string, params: Record<string, string>): Promise<T> {
+  async function get<T>(
+    path: string,
+    params: Record<string, string>
+  ): Promise<T> {
     const query = new URLSearchParams({ ...params, key: apiKey! })
     const res = await fetchImpl(`${API}/${path}?${query}`, {
       next: { revalidate: REVALIDATE_SECONDS }
@@ -89,7 +97,9 @@ export async function getChannelStats(
       maxResults: String(LATEST_COUNT),
       playlistId: item.contentDetails.relatedPlaylists.uploads
     })
-    const ids = (playlist.items ?? []).map(entry => entry.contentDetails.videoId)
+    const ids = (playlist.items ?? []).map(
+      entry => entry.contentDetails.videoId
+    )
 
     let latest: VideoStats[] = []
     if (ids.length > 0) {
@@ -119,13 +129,16 @@ export async function getChannelStats(
     return {
       title: item.snippet.title,
       avatarUrl: item.snippet.thumbnails?.default?.url ?? null,
-      subscribers: stats.hiddenSubscriberCount ? null : toNumber(stats.subscriberCount),
+      subscribers: stats.hiddenSubscriberCount
+        ? null
+        : toNumber(stats.subscriberCount),
       views: Number(stats.viewCount ?? 0),
       videos: Number(stats.videoCount ?? 0),
       latest
     }
   } catch (error) {
-    const reason = error instanceof YouTubeError ? error.message : 'network error'
+    const reason =
+      error instanceof YouTubeError ? error.message : 'network error'
     const message = `YouTube stats for ${channel.title} failed: ${reason}`
     console.error(message)
     const liveRefresh =

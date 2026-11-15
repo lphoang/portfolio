@@ -28,7 +28,12 @@ export function ViewsChart({ videos }: { videos: VideoStats[] }) {
         role="img"
         aria-label={`Views of the latest ${ordered.length} videos`}
       >
-        <text x={WIDTH} y={8} textAnchor="end" className="fill-muted font-label text-[7px]">
+        <text
+          x={WIDTH}
+          y={8}
+          textAnchor="end"
+          className="fill-muted font-label text-[7px]"
+        >
           max {formatCompact(max)}
         </text>
         {ordered.map((video, i) => {
@@ -38,12 +43,27 @@ export function ViewsChart({ videos }: { videos: VideoStats[] }) {
             <g key={video.id} data-bar className="group">
               <title>{`${video.title}: ${formatFull(video.views)} views`}</title>
               {/* Full-height hover target, bigger than the bar itself. */}
-              <rect x={x} y={0} width={barWidth} height={HEIGHT} fill="transparent" />
-              <path d={barPath(x, barWidth, h)} className="fill-bar group-hover:fill-accent" />
+              <rect
+                x={x}
+                y={0}
+                width={barWidth}
+                height={HEIGHT}
+                fill="transparent"
+              />
+              <path
+                d={barPath(x, barWidth, h)}
+                className="fill-bar group-hover:fill-accent"
+              />
             </g>
           )
         })}
-        <line x1={0} x2={WIDTH} y1={HEIGHT} y2={HEIGHT} className="stroke-line" />
+        <line
+          x1={0}
+          x2={WIDTH}
+          y1={HEIGHT}
+          y2={HEIGHT}
+          className="stroke-line"
+        />
       </svg>
       <figcaption className="mt-1 font-label text-[10px] text-muted">
         views per video, oldest → newest

@@ -13,7 +13,10 @@ const channel: ChannelConfig = {
   blurb: 'One question at a time.'
 }
 
-const video = (id: string, overrides: Partial<VideoStats> = {}): VideoStats => ({
+const video = (
+  id: string,
+  overrides: Partial<VideoStats> = {}
+): VideoStats => ({
   id,
   title: `Video ${id}`,
   url: `https://www.youtube.com/watch?v=${id}`,
@@ -60,7 +63,9 @@ test('no uploads shows "No videos yet" and no chart', () => {
 })
 
 test('a video with likes off shows —', () => {
-  const html = render(stats({ latest: [video('a', { likes: null, comments: null })] }))
+  const html = render(
+    stats({ latest: [video('a', { likes: null, comments: null })] })
+  )
   expect(html).toContain('—')
 })
 

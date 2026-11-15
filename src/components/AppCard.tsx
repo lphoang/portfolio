@@ -19,7 +19,10 @@ export function AppCard({ app, href }: Props) {
 
   if (!href) return <div className="card p-4">{body}</div>
   return (
-    <Link href={href} className="card block p-4 transition-colors hover:border-accent">
+    <Link
+      href={href}
+      className="card block p-4 transition-colors hover:border-accent"
+    >
       {body}
     </Link>
   )

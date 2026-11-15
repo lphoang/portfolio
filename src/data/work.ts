@@ -1,6 +1,11 @@
 export type Role = { title: string; period: string }
 
-export type Job = { company: string; place: string; period: string; roles: Role[] }
+export type Job = {
+  company: string
+  place: string
+  period: string
+  roles: Role[]
+}
 
 // From the LinkedIn profile, newest first.
 export const work: Job[] = [
