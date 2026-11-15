@@ -40,9 +40,9 @@
   color-scheme: dark;
 }
 
-/* The old Game Boy Mint dark theme. --bg is the night sky the page sits on. */
+/* The old Game Boy Mint dark theme, on The Starry Night painted in its greens. */
 [data-era='vibe'] {
-  --bg: #0a1a3f;
+  --bg: #0f1f14;
   --ink: #e2f0d4;
   --muted: #9fb79a;
   --accent: #9bd96b;
@@ -53,7 +53,7 @@
   --panel: #16291c;
   --line: #2c4a33;
   --focus: #9bd96b;
-  --haze-rgb: 10 26 63;
+  --haze-rgb: 15 31 20;
   --haze: 0.82;
   --glow-bg: radial-gradient(circle, rgb(226 240 212 / 0.22), transparent 68%);
   --card-title: #e2f0d4;
@@ -126,7 +126,7 @@ body {
 }
 
 [data-era='vibe'] .era-nav {
-  background: rgb(10 26 63 / 0.72);
+  background: rgb(15 31 20 / 0.8);
 }
 
 [data-era='dev'] .era-logo {
@@ -285,7 +285,7 @@ body {
 }
 
 /* A haze behind the text column keeps text readable over the moving background:
-   night blue in Vibe mode, near-black in Dev mode. Its strength (--haze) is checked by a test. */
+   deep green in Vibe mode, near-black in Dev mode. Its strength (--haze) is checked by a test. */
 .text-haze {
   position: fixed;
   inset: 0;

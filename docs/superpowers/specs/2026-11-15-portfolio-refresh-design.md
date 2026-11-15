@@ -68,7 +68,7 @@ Top to bottom:
 3. **Education**: 2017 – 2022 · Engineering degree · Danang University of Science and Technology. LinkedIn says "High School Diploma", which looks like a typo. The old site says "engineering degree", so we use that.
 4. **Bio line**: "1999 · Born in Hue, Vietnam" stays, as the first or last line of the timeline.
 5. **On YouTube / Building** (teasers, as in the approved theme mockup): one small row per channel with its name and subscriber count, linking to `/channels`; and the 2Eat card with its "Coming soon" badge, linking to `/apps`. They use the same cached YouTube data as the Channels page and the same fallback (no number, just the link) when stats are unavailable.
-6. **I ♥**: reading detective books, adventure movies, coding, and Pokémon (games and anime).
+6. **I ♥**: reading detective books, adventure movies, coding, and Pokémon.
 7. **Connect**: GitHub (`@lphoang`), LinkedIn, and the two YouTube channels.
 
 ### Channels (`/channels`)

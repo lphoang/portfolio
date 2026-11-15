@@ -3,11 +3,12 @@ import { readFileSync } from 'node:fs'
 import { contrastRatio, eraVars } from '@/lib/contrast'
 
 import {
-  BLUES,
   RAIN_ALPHA,
   RAIN_GREENS,
+  SKY,
   STARS,
   STAR_CORE,
+  STROKES,
   blend,
   flow,
   needsRefit,
@@ -53,10 +54,31 @@ test('vibe text over the haze stays readable at its worst spots in the sky', () 
   const haze = hazeOf('vibe')
   expect(haze).toBeGreaterThan(0)
   // The haze (the sky color at --haze) sits over the brightest stroke or a star's core.
-  const behind = [...BLUES, STAR_CORE].map(color => blend(v.bg, color, haze))
+  const behind = [...STROKES, STAR_CORE].map(color => blend(v.bg, color, haze))
   for (const text of ['ink', 'muted', 'accent', 'label'])
     for (const bg of behind)
       expect(contrastRatio(v[text], bg)).toBeGreaterThanOrEqual(4.5)
+})
+
+test('the sky is painted in the Vibe background color, and the haze matches it', () => {
+  const v = eraVars(css, 'vibe')
+  expect(SKY).toBe(v.bg)
+  const hazeRgb = css.match(
+    /\[data-era='vibe'\][^}]*--haze-rgb:\s*([\d ]+);/
+  )?.[1]
+  expect(hazeRgb?.split(' ').map(Number)).toEqual(
+    [1, 3, 5].map(i => parseInt(v.bg.slice(i, i + 2), 16))
+  )
+})
+
+test('the swirl and the stars are Game Boy greens, not blue or yellow', () => {
+  const rgb = (hex: string) =>
+    [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16))
+  for (const color of [...STROKES, STAR_CORE]) {
+    const [r, g, b] = rgb(color)
+    expect(g).toBeGreaterThan(r)
+    expect(g).toBeGreaterThan(b)
+  }
 })
 
 test('blend mixes two colors', () => {
