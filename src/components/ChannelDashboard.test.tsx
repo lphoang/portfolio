@@ -24,6 +24,8 @@ const video = (
   views: 1200,
   likes: 40,
   comments: 3,
+  coverUrl: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
+  portrait: true,
   ...overrides
 })
 
@@ -73,4 +75,29 @@ test('totals use the short form with the full number on hover', () => {
   const html = render(stats())
   expect(html).toContain('12.4K')
   expect(html).toContain('title="12,400"')
+})
+
+test('each video shows its cover, linking to the video', () => {
+  const html = render(stats())
+  for (const id of ['a', 'b', 'c']) {
+    expect(html).toContain(`src="https://i.ytimg.com/vi/${id}/hqdefault.jpg"`)
+    expect(html).toContain(`href="https://www.youtube.com/watch?v=${id}"`)
+  }
+})
+
+test('a video without a cover gets a plain placeholder, not a broken image', () => {
+  const html = render(stats({ latest: [video('a', { coverUrl: null })] }))
+  expect(html).not.toContain('<img')
+  expect(html).toContain('Video a')
+})
+
+test('a Short fills its tile; a landscape video is shown whole over a blurred copy', () => {
+  const short = render(stats({ latest: [video('a')] }))
+  expect(short.match(/<img/g)).toHaveLength(1)
+  expect(short).toContain('object-cover')
+
+  const wide = render(stats({ latest: [video('a', { portrait: false })] }))
+  expect(wide.match(/<img/g)).toHaveLength(2)
+  expect(wide).toContain('object-contain')
+  expect(wide).toContain('blur')
 })

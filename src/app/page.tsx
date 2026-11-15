@@ -31,7 +31,6 @@ export default async function Home() {
         <Figure variant="dev" label="3D figure of Hoang wearing a headset" />
         <h1 className="era-name mt-2 font-display">{profile.name}</h1>
         <p className="era-tagline mt-2 text-muted">{profile.tagline}</p>
-        <p className="mt-4 max-w-xl">{profile.intro}</p>
       </section>
 
       <section>

@@ -10,20 +10,49 @@ type Props = { channel: ChannelConfig; stats: ChannelStats | null }
 
 const count = (n: number | null) => (n === null ? '—' : formatCompact(n))
 
-function VideoRow({ video }: { video: VideoStats }) {
+// A Shorts-style cover: the portrait frame, its views, then title, date and reactions.
+function VideoCard({ video }: { video: VideoStats }) {
   return (
-    <li className="py-2.5">
+    <li>
       <a
         href={video.url}
         target="_blank"
         rel="noreferrer"
-        className="line-clamp-2 font-semibold break-words hover:text-accent"
+        className="group block"
       >
-        {video.title}
+        <div className="relative aspect-[9/16] overflow-hidden rounded-[4px] border border-line bg-panel">
+          {video.coverUrl && !video.portrait && (
+            // Landscape videos: a blurred copy fills the tile behind the whole cover.
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={video.coverUrl}
+              alt=""
+              loading="lazy"
+              className="absolute inset-0 size-full scale-110 object-cover opacity-50 blur-md"
+            />
+          )}
+          {video.coverUrl && (
+            // A remote YouTube thumbnail; CSS crops it, so the image optimizer adds nothing.
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={video.coverUrl}
+              alt=""
+              loading="lazy"
+              className={`relative size-full transition-transform duration-300 group-hover:scale-105 ${
+                video.portrait ? 'object-cover' : 'object-contain'
+              }`}
+            />
+          )}
+          <span className="absolute bottom-1 left-1 rounded bg-black/75 px-1.5 py-0.5 font-label text-[10px] text-white">
+            {count(video.views)} views
+          </span>
+        </div>
+        <p className="mt-1.5 line-clamp-2 text-xs font-semibold break-words group-hover:text-accent">
+          {video.title}
+        </p>
       </a>
-      <div className="mt-1 flex flex-wrap gap-x-3 font-label text-[10px] text-muted">
+      <div className="mt-0.5 flex flex-wrap gap-x-2 font-label text-[10px] text-muted">
         <span>{formatDate(video.publishedAt)}</span>
-        <span>{count(video.views)} views</span>
         <span>{count(video.likes)} likes</span>
         <span>{count(video.comments)} comments</span>
       </div>
@@ -79,9 +108,9 @@ export function ChannelDashboard({ channel, stats }: Props) {
             ) : (
               <>
                 <ViewsChart videos={stats.latest} />
-                <ol className="mt-3 divide-y divide-line">
+                <ol className="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5">
                   {stats.latest.map(video => (
-                    <VideoRow key={video.id} video={video} />
+                    <VideoCard key={video.id} video={video} />
                   ))}
                 </ol>
               </>
