@@ -11,8 +11,6 @@ import {
 } from 'react'
 import { BoxGeometry, type Group, type InstancedMesh, Matrix4 } from 'three'
 
-import { useIsDark } from '@/lib/useIsDark'
-
 import type { Variant } from './model'
 import { easeOffset, frameloopFor, pose } from './pose'
 import type { FigureData } from './voxelize'
@@ -96,7 +94,8 @@ function Scene({
 }) {
   const pivot = useRef<Group>(null)
   const motion = useRef({ offset: 0, lastInput: -1e9, hopAt: -1e9 })
-  const dark = useIsDark()
+  // Both eras are dark; per-era lights arrive with the era-aware figure.
+  const dark = true
   const canvas = useThree(state => state.gl.domElement)
   // With reduced motion the canvas only draws on request (see frameloopFor).
   const invalidate = useThree(state => state.invalidate)

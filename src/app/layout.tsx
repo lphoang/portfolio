@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { Doto, Inter, Silkscreen, Space_Grotesk } from 'next/font/google'
 
 import { Navbar } from '@/components/Navbar'
-import { themeScript } from '@/lib/theme'
+import { eraScript } from '@/lib/era'
 
 import './globals.css'
 
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   title: { default: 'Le Phuoc Hoang', template: '%s · Le Phuoc Hoang' },
   description:
     'Software engineer in Da Nang, Vietnam: work history, YouTube channels and apps.',
-  icons: '/images/alien.svg'
+  icons: '/icons/era-terminal.svg'
 }
 
 export default function RootLayout({
@@ -43,7 +43,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={fonts.join(' ')} suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <script dangerouslySetInnerHTML={{ __html: eraScript }} />
       </head>
       <body className="min-h-dvh antialiased">
         <Navbar />
