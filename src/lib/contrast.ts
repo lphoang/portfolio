@@ -15,7 +15,8 @@ export function contrastRatio(a: string, b: string): number {
 }
 
 // Text color on background color, per era. Every pair must reach AA (4.5:1).
-const PAIRS: Record<Era, [fg: string, bg: string][]> = {
+// Text pairs need 4.5:1; the focus ring is a UI part and needs 3:1.
+const PAIRS: Record<Era, [fg: string, bg: string, min?: number][]> = {
   terminal: [
     ['ink', 'bg'],
     ['muted', 'bg'],
@@ -26,7 +27,8 @@ const PAIRS: Record<Era, [fg: string, bg: string][]> = {
     ['accent', 'panel'],
     ['mint', 'panel'],
     ['num', 'panel'],
-    ['badge-ink', 'badge']
+    ['badge-ink', 'badge'],
+    ['focus', 'bg', 3]
   ],
   starry: [
     ['ink', 'bg'],
@@ -45,7 +47,8 @@ const PAIRS: Record<Era, [fg: string, bg: string][]> = {
     ['paper-ink', 'paper-rim'],
     ['paper-muted', 'paper-rim'],
     ['prussian', 'paper-rim'],
-    ['seal-ink', 'seal-light']
+    ['seal-ink', 'seal-light'],
+    ['focus', 'bg', 3]
   ]
 }
 
@@ -71,12 +74,12 @@ export function eraTextPairs(
 ): { era: Era; name: string; fg: string; bg: string; min: number }[] {
   return (Object.keys(PAIRS) as Era[]).flatMap(era => {
     const vars = eraVars(css, era)
-    return PAIRS[era].map(([fg, bg]) => ({
+    return PAIRS[era].map(([fg, bg, min = 4.5]) => ({
       era,
       name: `${fg} on ${bg}`,
       fg: vars[fg],
       bg: vars[bg],
-      min: 4.5
+      min
     }))
   })
 }

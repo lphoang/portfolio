@@ -8,7 +8,7 @@ import type { Era } from '@/lib/era'
 import { useEra } from '@/lib/useEra'
 import { useReducedMotion } from '@/lib/useReducedMotion'
 
-import { figureUrl, lightsFor, pickShown } from './figureEra'
+import { figureUrl, lightsFor, nextLoads, pickShown } from './figureEra'
 import type { Variant } from './model'
 import { easeOffset, frameloopFor, pose } from './pose'
 import type { FigureData } from './voxelize'
@@ -178,38 +178,38 @@ type Props = { variant: Variant; inView: boolean }
 export default function VoxelFigure({ variant, inView }: Props) {
   const era = useEra()
   const reducedMotion = useReducedMotion()
+  // Asked once: creating a WebGL context to test for it isn't free.
+  const [webgl] = useState(hasWebGL)
   const [loaded, setLoaded] = useState<Partial<Record<Era, FigureData>>>({})
+  const pending = useRef(new Set<Era>())
 
-  // Load this era's figure now and the other era's once the browser is idle,
-  // so switching eras swaps outfits without waiting.
+  // Load this era's figure now and the other era's once the browser is idle, so
+  // switching eras swaps outfits without waiting or downloading anything again.
   useEffect(() => {
     // No WebGL: skip the download too; the placeholder stays.
-    if (!hasWebGL()) return
-    let cancelled = false
-    const load = (which: Era) =>
+    if (!webgl) return
+    const load = (which: Era) => {
+      pending.current.add(which)
       fetch(figureUrl(variant, which))
         .then(res => res.json() as Promise<FigureData>)
-        .then(figure => {
-          if (!cancelled)
-            setLoaded(prev =>
-              prev[which] ? prev : { ...prev, [which]: figure }
-            )
-        })
+        .then(figure => setLoaded(prev => ({ ...prev, [which]: figure })))
         .catch(() => {
           // Without the data the placeholder (or the other outfit) simply stays.
         })
-    load(era)
-    const other: Era = era === 'starry' ? 'terminal' : 'starry'
+        .finally(() => pending.current.delete(which))
+    }
+    const { now, later } = nextLoads({ loaded, pending: pending.current, era })
+    if (now) load(now)
+    if (!later) return
     const idle = 'requestIdleCallback' in window
     const handle = idle
-      ? window.requestIdleCallback(() => load(other), { timeout: 3000 })
-      : window.setTimeout(() => load(other), 1500)
+      ? window.requestIdleCallback(() => load(later), { timeout: 3000 })
+      : window.setTimeout(() => load(later), 1500)
     return () => {
-      cancelled = true
       if (idle) window.cancelIdleCallback(handle)
       else window.clearTimeout(handle)
     }
-  }, [variant, era])
+  }, [webgl, variant, era, loaded])
 
   const shown = pickShown(loaded, era)
   if (!shown) return null

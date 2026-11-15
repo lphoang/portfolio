@@ -4,13 +4,24 @@ import { contrastRatio, eraVars } from '@/lib/contrast'
 
 import {
   BLUES,
-  SCRIM_ALPHA,
+  RAIN_ALPHA,
+  RAIN_GREENS,
   STARS,
   STAR_CORE,
   blend,
   flow,
+  needsRefit,
   shouldAnimate
 } from './motion'
+
+// The haze opacity per era, read from the stylesheet so the test follows the CSS.
+const css = readFileSync('src/app/globals.css', 'utf8')
+const hazeOf = (era: 'starry' | 'terminal') =>
+  Number(
+    css.match(
+      new RegExp(`\\[data-era='${era}'\\][^}]*--haze:\\s*([\\d.]+)`)
+    )?.[1]
+  )
 
 test('a background animates only in its own era, visible, without reduced motion', () => {
   const base = {
@@ -38,10 +49,11 @@ test('the swirl field gives unit vectors', () => {
 })
 
 test('1889 text over the haze stays readable at its worst spots', () => {
-  const v = eraVars(readFileSync('src/app/globals.css', 'utf8'), 'starry')
-  // The haze (the sky color at SCRIM_ALPHA) sits over the brightest stroke or a star's core.
-  const brightest = [...BLUES, STAR_CORE]
-  const behind = brightest.map(color => blend(v.bg, color, SCRIM_ALPHA))
+  const v = eraVars(css, 'starry')
+  const haze = hazeOf('starry')
+  expect(haze).toBeGreaterThan(0)
+  // The haze (the sky color at --haze) sits over the brightest stroke or a star's core.
+  const behind = [...BLUES, STAR_CORE].map(color => blend(v.bg, color, haze))
   for (const text of ['ink', 'muted', 'label'])
     for (const bg of behind)
       expect(contrastRatio(v[text], bg)).toBeGreaterThanOrEqual(4.5)
@@ -50,4 +62,26 @@ test('1889 text over the haze stays readable at its worst spots', () => {
 test('blend mixes two colors', () => {
   expect(blend('#000000', '#ffffff', 0.5)).toBe('#808080')
   expect(blend('#0a1a3f', '#ffffff', 1)).toBe('#0a1a3f')
+})
+
+test('terminal text over the haze stays readable where rain characters overlap', () => {
+  const v = eraVars(css, 'terminal')
+  const haze = hazeOf('terminal')
+  expect(haze).toBeGreaterThan(0)
+  // Slow columns overlap from frame to frame, so a pixel can build up to about
+  // 1.7 glyphs' worth of color.
+  const piledUp = Math.min(1, RAIN_ALPHA * 1.7)
+  const behind = RAIN_GREENS.map(green =>
+    blend(v.bg, blend(green, v.bg, piledUp), haze)
+  )
+  for (const text of ['ink', 'muted', 'accent', 'label'])
+    for (const bg of behind)
+      expect(contrastRatio(v[text], bg)).toBeGreaterThanOrEqual(4.5)
+})
+
+test('a canvas is rebuilt only when its size really changes', () => {
+  const canvas = { width: 390, height: 844 }
+  expect(needsRefit(canvas, { width: 390, height: 844 })).toBe(false)
+  expect(needsRefit(canvas, { width: 844, height: 390 })).toBe(true)
+  expect(needsRefit(canvas, { width: 390, height: 900 })).toBe(true)
 })

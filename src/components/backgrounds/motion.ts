@@ -71,8 +71,14 @@ export function flow(
   return [vx / m, vy / m]
 }
 
-// How strongly the night-blue haze covers the painting behind the text column.
-export const SCRIM_ALPHA = 0.78
+// Rebuild a canvas only when its on-screen size really changes (a rotation, a
+// window resize), not on every resize event.
+export function needsRefit(
+  canvas: { width: number; height: number },
+  size: { width: number; height: number }
+): boolean {
+  return canvas.width !== size.width || canvas.height !== size.height
+}
 
 // The color you see when `top` covers `bottom` with the given opacity.
 export function blend(top: string, bottom: string, alpha: number): string {
@@ -92,6 +98,7 @@ export function blend(top: string, bottom: string, alpha: number): string {
 // ---------- terminal: falling characters ----------
 
 export const RAIN_GLYPHS = '01<>/{}[]=+*#$%&ABCDEF'
+export const RAIN_ALPHA = 0.28
 export const RAIN_GREENS = [
   '#39ff6a',
   '#c6ff3d',

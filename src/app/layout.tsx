@@ -8,6 +8,7 @@ import {
 } from 'next/font/google'
 
 import { Craft } from '@/components/Craft'
+import { EraFavicon } from '@/components/EraFavicon'
 import { Navbar } from '@/components/Navbar'
 import { Silhouettes } from '@/components/backgrounds/Silhouettes'
 import { StarrySky } from '@/components/backgrounds/StarrySky'
@@ -37,19 +38,21 @@ const playfair = Playfair_Display({
   subsets: ['latin', 'vietnamese'],
   weight: ['400', '600'],
   style: ['normal', 'italic'],
-  variable: '--font-playfair'
+  variable: '--font-playfair',
+  // The terminal is the default era, so 1889's fonts load when needed.
+  preload: false
 })
 const specialElite = Special_Elite({
   subsets: ['latin'],
   weight: '400',
-  variable: '--font-special-elite'
+  variable: '--font-special-elite',
+  preload: false
 })
 
 export const metadata: Metadata = {
   title: { default: 'Le Phuoc Hoang', template: '%s · Le Phuoc Hoang' },
   description:
-    'Software engineer in Da Nang, Vietnam: work history, YouTube channels and apps.',
-  icons: '/icons/era-terminal.svg'
+    'Software engineer in Da Nang, Vietnam: work history, YouTube channels and apps.'
 }
 
 export default function RootLayout({
@@ -61,7 +64,14 @@ export default function RootLayout({
     f => f.variable
   )
   return (
-    <html lang="en" className={fonts.join(' ')} suppressHydrationWarning>
+    // data-era is the default for the first paint (and without JS); the head script
+    // switches it to the saved era before paint.
+    <html
+      lang="en"
+      data-era="terminal"
+      className={fonts.join(' ')}
+      suppressHydrationWarning
+    >
       <head>
         <script dangerouslySetInnerHTML={{ __html: eraScript }} />
       </head>
@@ -88,13 +98,14 @@ export default function RootLayout({
         <TerminalRain />
         <StarrySky />
         <Silhouettes />
-        <div className="sky-scrim starry-only" aria-hidden />
+        <div className="text-haze" aria-hidden />
         <div className="crt terminal-only" aria-hidden />
         <Navbar />
         <main className="relative z-[4] mx-auto w-full max-w-3xl px-4 pt-6 pb-16 sm:px-6">
           {children}
         </main>
         <Craft />
+        <EraFavicon />
       </body>
     </html>
   )
