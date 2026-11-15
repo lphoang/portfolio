@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { ChannelDashboard } from '@/components/ChannelDashboard'
 import { SectionLabel } from '@/components/SectionLabel'
 import { channels } from '@/data/channels'
+import { Figure } from '@/figure/Figure'
 import { getChannelStats } from '@/lib/youtube'
 
 export const metadata: Metadata = { title: 'Channels' }
@@ -11,15 +12,24 @@ export const metadata: Metadata = { title: 'Channels' }
 export const revalidate = 21600
 
 export default async function ChannelsPage() {
-  const stats = await Promise.all(channels.map(channel => getChannelStats(channel)))
+  const stats = await Promise.all(
+    channels.map(channel => getChannelStats(channel))
+  )
   return (
     <div className="space-y-8">
-      {/* The 3D figure goes here. */}
+      <Figure
+        variant="creator"
+        label="3D figure of Hoang filming with a phone"
+      />
       <section>
         <SectionLabel>channels</SectionLabel>
         <div className="space-y-4">
           {channels.map((channel, i) => (
-            <ChannelDashboard key={channel.id} channel={channel} stats={stats[i]} />
+            <ChannelDashboard
+              key={channel.id}
+              channel={channel}
+              stats={stats[i]}
+            />
           ))}
         </div>
       </section>

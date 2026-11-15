@@ -6,6 +6,7 @@ import { apps } from '@/data/apps'
 import { channels } from '@/data/channels'
 import { profile } from '@/data/profile'
 import { education, work } from '@/data/work'
+import { Figure } from '@/figure/Figure'
 import { getChannelStats } from '@/lib/youtube'
 
 // The channel teasers use YouTube numbers; refresh at most every 6 hours.
@@ -13,16 +14,22 @@ export const revalidate = 21600
 
 const links = [
   ...profile.links,
-  ...channels.map(channel => ({ label: 'YouTube', text: channel.handle, url: channel.url }))
+  ...channels.map(channel => ({
+    label: 'YouTube',
+    text: channel.handle,
+    url: channel.url
+  }))
 ]
 
 export default async function Home() {
-  const stats = await Promise.all(channels.map(channel => getChannelStats(channel)))
+  const stats = await Promise.all(
+    channels.map(channel => getChannelStats(channel))
+  )
   return (
     <div className="space-y-10">
       <section className="flex flex-col items-center text-center">
-        {/* The 3D figure goes here. */}
-        <h1 className="font-display text-4xl font-bold">{profile.name}</h1>
+        <Figure variant="dev" label="3D figure of Hoang wearing a headset" />
+        <h1 className="mt-2 font-display text-4xl font-bold">{profile.name}</h1>
         <p className="mt-2 text-muted">{profile.tagline}</p>
         <p className="mt-4 max-w-xl">{profile.intro}</p>
       </section>
@@ -35,7 +42,9 @@ export default async function Home() {
       <section>
         <SectionLabel>education</SectionLabel>
         <div className="card grid gap-1 p-4 sm:grid-cols-[7.5rem_1fr]">
-          <span className="pt-1 font-label text-[10px] text-muted">{education.period}</span>
+          <span className="pt-1 font-label text-[10px] text-muted">
+            {education.period}
+          </span>
           <div>
             <h3 className="font-display font-bold">{education.school}</h3>
             <p className="text-sm">{education.degree}</p>
@@ -47,7 +56,11 @@ export default async function Home() {
         <SectionLabel>on youtube</SectionLabel>
         <div className="space-y-2">
           {channels.map((channel, i) => (
-            <ChannelTeaser key={channel.id} channel={channel} stats={stats[i]} />
+            <ChannelTeaser
+              key={channel.id}
+              channel={channel}
+              stats={stats[i]}
+            />
           ))}
         </div>
       </section>
@@ -73,9 +86,18 @@ export default async function Home() {
         <ul className="space-y-1">
           {links.map(link => (
             <li key={link.url}>
-              <a href={link.url} target="_blank" rel="noreferrer" className="hover:text-accent">
-                <span className="font-label text-[10px] text-muted">{link.label}</span>{' '}
-                <span className="underline underline-offset-4">{link.text}</span>
+              <a
+                href={link.url}
+                target="_blank"
+                rel="noreferrer"
+                className="hover:text-accent"
+              >
+                <span className="font-label text-[10px] text-muted">
+                  {link.label}
+                </span>{' '}
+                <span className="underline underline-offset-4">
+                  {link.text}
+                </span>
               </a>
             </li>
           ))}

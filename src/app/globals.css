@@ -31,6 +31,8 @@
   --dot: #e2f0d410;
   /* Chart bars: a step deeper than the accent to stay in the chart lightness band. */
   --bar: #5fa83c;
+  /* Glow behind the 3D figure so its dark hair and clothes stay visible. */
+  --spot: #e2f0d438;
   color-scheme: dark;
 }
 
