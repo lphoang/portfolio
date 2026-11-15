@@ -1,38 +1,60 @@
 @import 'tailwindcss';
 
-@custom-variant dark (&:where(.dark, .dark *));
-
-/* Game Boy Mint. Light values on :root, dark values when <html> has .dark. */
-:root {
-  --bg: #e9f1df;
-  --panel: #f6faef;
-  --line: #b9cba6;
-  --ink: #1b2e22;
-  --muted: #5b6f58;
-  --accent: #2f6b2b;
-  --num: #2f6b2b;
-  --badge: #2f6b2b;
-  --badge-ink: #e9f1df;
-  --dot: #1b2e2218;
-  --bar: #2f6b2b;
-  color-scheme: light;
+/*
+ * Two eras, chosen by `data-era` on <html>: the terminal (default) and 1889.
+ * Components use the same utilities in both (text-muted, font-display, …);
+ * the variables behind them change per era, and again inside cards.
+ */
+:root,
+[data-era='terminal'] {
+  --bg: #030805;
+  --ink: #d4ffe0;
+  --muted: #7fcf98;
+  --accent: #39ff6a;
+  --label: #c6ff3d;
+  --lime: #c6ff3d;
+  --mint: #2bffc6;
+  --teal: #19d3c5;
+  --num: #8dff5a;
+  --badge: #c6ff3d;
+  --badge-ink: #030805;
+  --panel: #06110a;
+  --line: #1f8a46;
+  --card-title: #2bffc6;
+  --era-display: var(--font-vt323);
+  --era-sans: var(--font-plex-mono);
+  --era-label: var(--font-plex-mono);
+  --era-num: var(--font-vt323);
+  --era-card-title: var(--font-jetbrains);
+  --era-card-text: var(--font-plex-mono);
+  color-scheme: dark;
 }
 
-.dark {
-  --bg: #0f1f14;
-  --panel: #16291c;
-  --line: #2c4a33;
-  --ink: #e2f0d4;
-  --muted: #9fb79a;
-  --accent: #9bd96b;
-  --num: #d4ec8a;
-  --badge: #9bd96b;
-  --badge-ink: #0f1f14;
-  --dot: #e2f0d410;
-  /* Chart bars: a step deeper than the accent to stay in the chart lightness band. */
-  --bar: #5fa83c;
-  /* Glow behind the 3D figure so its dark hair and clothes stay visible. */
-  --spot: #e2f0d438;
+[data-era='starry'] {
+  --bg: #0a1a3f;
+  --ink: #f3e9d2;
+  --muted: #cdbf9c;
+  --accent: #f4d35e;
+  --label: #f1d98a;
+  --num: #f7e48b;
+  --badge: #8e2b20;
+  --badge-ink: #f6e7c8;
+  --panel: #10285a;
+  --line: #3d5a8f;
+  --paper: #efe3c6;
+  --paper-ink: #3a2716;
+  --paper-muted: #5b4329;
+  --date: #7a5a32;
+  --prussian: #1f3b70;
+  --seal: #8e2b20;
+  --seal-ink: #f6e7c8;
+  --card-title: #1f3b70;
+  --era-display: var(--font-playfair);
+  --era-sans: var(--font-playfair);
+  --era-label: var(--font-special-elite);
+  --era-num: var(--font-special-elite);
+  --era-card-title: var(--font-special-elite);
+  --era-card-text: var(--font-special-elite);
   color-scheme: dark;
 }
 
@@ -43,19 +65,22 @@
   --color-ink: var(--ink);
   --color-muted: var(--muted);
   --color-accent: var(--accent);
+  --color-label: var(--label);
   --color-num: var(--num);
   --color-badge: var(--badge);
   --color-badge-ink: var(--badge-ink);
   --color-bar: var(--bar);
 
-  --font-display: var(--font-space-grotesk), ui-sans-serif, sans-serif;
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-label: var(--font-silkscreen), ui-monospace, monospace;
-  --font-num: var(--font-doto), ui-monospace, monospace;
+  --font-display: var(--era-display), ui-serif, serif;
+  --font-sans: var(--era-sans), ui-monospace, monospace;
+  --font-label: var(--era-label), ui-monospace, monospace;
+  --font-num: var(--era-num), ui-monospace, monospace;
 }
 
-/* Every box on the site: 1px border, 6px corners. */
+/* Every box on the site. Era styles (paper, terminal panel) come with the cards. */
 @utility card {
+  --era-display: var(--era-card-title);
+  --era-sans: var(--era-card-text);
   background-color: var(--panel);
   border: 1px solid var(--line);
   border-radius: 6px;
@@ -68,13 +93,123 @@ html {
 
 body {
   background-color: var(--bg);
-  background-image: radial-gradient(var(--dot) 1px, transparent 1px);
-  background-size: 8px 8px;
   color: var(--ink);
   font-family: var(--font-sans);
+}
+
+[data-era='terminal'] body {
+  font-size: 15px;
+}
+
+[data-era='starry'] body {
+  font-size: 17px;
 }
 
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
+}
+
+/* ---------- navbar ---------- */
+.era-nav {
+  backdrop-filter: blur(6px);
+}
+
+[data-era='terminal'] .era-nav {
+  background: rgb(3 8 5 / 0.82);
+}
+
+[data-era='starry'] .era-nav {
+  background: rgb(10 26 63 / 0.72);
+}
+
+[data-era='terminal'] .era-logo {
+  font-size: 26px;
+  font-weight: 400;
+  text-shadow: 0 0 8px rgb(57 255 106 / 0.7);
+}
+
+[data-era='starry'] .era-logo {
+  font-style: italic;
+  font-weight: 600;
+}
+
+/* ---------- name, tagline, section labels ---------- */
+[data-era='terminal'] .era-name {
+  font-size: 60px;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--accent);
+  text-shadow:
+    0 0 6px rgb(57 255 106 / 0.9),
+    0 0 22px rgb(57 255 106 / 0.45);
+}
+
+[data-era='terminal'] .era-name::after {
+  content: '█';
+  margin-left: 4px;
+  color: var(--lime);
+  animation: blink 1s steps(1) infinite;
+}
+
+[data-era='starry'] .era-name {
+  font-size: 44px;
+  font-style: italic;
+  font-weight: 600;
+  color: #f6edd6;
+  text-shadow: 0 0 18px rgb(244 211 94 / 0.3);
+}
+
+[data-era='terminal'] .era-tagline::before {
+  content: '$ echo ';
+  color: var(--mint);
+}
+
+[data-era='starry'] .era-tagline {
+  font-style: italic;
+}
+
+.section-label {
+  color: var(--label);
+  font-family: var(--font-label);
+}
+
+[data-era='terminal'] .section-label {
+  font-size: 14px;
+}
+
+[data-era='terminal'] .section-label::before {
+  content: '> ';
+  color: var(--mint);
+}
+
+[data-era='terminal'] .section-label::after {
+  content: '_';
+  color: var(--accent);
+  animation: blink 1s steps(1) infinite;
+}
+
+[data-era='starry'] .section-label {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+/* Titles inside cards: mint on the terminal, Prussian blue on paper. */
+.card .font-display {
+  color: var(--card-title);
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+  }
 }

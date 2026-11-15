@@ -1,30 +1,44 @@
 import type { Metadata } from 'next'
-import { Doto, Inter, Silkscreen, Space_Grotesk } from 'next/font/google'
+import {
+  IBM_Plex_Mono,
+  JetBrains_Mono,
+  Playfair_Display,
+  Special_Elite,
+  VT323
+} from 'next/font/google'
 
 import { Navbar } from '@/components/Navbar'
 import { eraScript } from '@/lib/era'
 
 import './globals.css'
 
-const spaceGrotesk = Space_Grotesk({
-  subsets: ['latin', 'vietnamese'],
-  weight: ['500', '700'],
-  variable: '--font-space-grotesk'
-})
-const inter = Inter({
-  subsets: ['latin', 'vietnamese'],
-  weight: ['400', '600'],
-  variable: '--font-inter'
-})
-const silkscreen = Silkscreen({
+// Terminal era
+const vt323 = VT323({
   subsets: ['latin'],
   weight: '400',
-  variable: '--font-silkscreen'
+  variable: '--font-vt323'
 })
-const doto = Doto({
+const plexMono = IBM_Plex_Mono({
+  subsets: ['latin', 'vietnamese'],
+  weight: ['400', '600'],
+  variable: '--font-plex-mono'
+})
+const jetbrains = JetBrains_Mono({
   subsets: ['latin'],
-  weight: '900',
-  variable: '--font-doto'
+  weight: '800',
+  variable: '--font-jetbrains'
+})
+// 1889 era
+const playfair = Playfair_Display({
+  subsets: ['latin', 'vietnamese'],
+  weight: ['400', '600'],
+  style: ['normal', 'italic'],
+  variable: '--font-playfair'
+})
+const specialElite = Special_Elite({
+  subsets: ['latin'],
+  weight: '400',
+  variable: '--font-special-elite'
 })
 
 export const metadata: Metadata = {
@@ -39,7 +53,9 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const fonts = [spaceGrotesk, inter, silkscreen, doto].map(f => f.variable)
+  const fonts = [vt323, plexMono, jetbrains, playfair, specialElite].map(
+    f => f.variable
+  )
   return (
     <html lang="en" className={fonts.join(' ')} suppressHydrationWarning>
       <head>

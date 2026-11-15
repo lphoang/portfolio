@@ -29,8 +29,8 @@ export default async function Home() {
     <div className="space-y-10">
       <section className="flex flex-col items-center text-center">
         <Figure variant="dev" label="3D figure of Hoang wearing a headset" />
-        <h1 className="mt-2 font-display text-4xl font-bold">{profile.name}</h1>
-        <p className="mt-2 text-muted">{profile.tagline}</p>
+        <h1 className="era-name mt-2 font-display">{profile.name}</h1>
+        <p className="era-tagline mt-2 text-muted">{profile.tagline}</p>
         <p className="mt-4 max-w-xl">{profile.intro}</p>
       </section>
 
