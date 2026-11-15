@@ -61,6 +61,11 @@
   border-radius: 6px;
 }
 
+/* Reserve the scrollbar's space so the navbar doesn't shift between short and long pages. */
+html {
+  scrollbar-gutter: stable;
+}
+
 body {
   background-color: var(--bg);
   background-image: radial-gradient(var(--dot) 1px, transparent 1px);

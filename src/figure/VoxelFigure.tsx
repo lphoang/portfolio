@@ -16,6 +16,7 @@ import { useIsDark } from '@/lib/useIsDark'
 import type { Variant } from './model'
 import { pose } from './pose'
 import type { FigureData } from './voxelize'
+import { hasWebGL } from './webgl'
 
 // Model units visible across the canvas; the figure is about 25 units tall.
 const VIEW_UNITS = 31
@@ -174,6 +175,8 @@ export default function VoxelFigure({ variant }: { variant: Variant }) {
   const [data, setData] = useState<FigureData | null>(null)
 
   useEffect(() => {
+    // No WebGL: skip the download too; the placeholder stays.
+    if (!hasWebGL()) return
     let cancelled = false
     fetch(`/figures/${variant}.json`)
       .then(res => res.json() as Promise<FigureData>)

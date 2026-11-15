@@ -34,7 +34,7 @@ function VideoRow({ video }: { video: VideoStats }) {
 export function ChannelDashboard({ channel, stats }: Props) {
   return (
     <article className="card p-4 sm:p-5">
-      <header className="flex items-start gap-3">
+      <header className="flex flex-wrap items-start gap-x-3 gap-y-2">
         {stats?.avatarUrl && (
           // A 48px remote avatar does not need the image optimizer or its domain config.
           // eslint-disable-next-line @next/next/no-img-element
@@ -46,7 +46,8 @@ export function ChannelDashboard({ channel, stats }: Props) {
             className="size-12 shrink-0 rounded-full border border-line"
           />
         )}
-        <div className="min-w-0 flex-1">
+        {/* basis-56: on narrow screens the YouTube link wraps below instead of squeezing the text. */}
+        <div className="min-w-0 flex-1 basis-56">
           <h3 className="font-display text-lg font-bold">{channel.title}</h3>
           <p className="text-sm text-muted">{channel.blurb}</p>
         </div>
