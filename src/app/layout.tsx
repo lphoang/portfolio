@@ -66,6 +66,25 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: eraScript }} />
       </head>
       <body className="min-h-dvh antialiased">
+        {/* Rough, deckled edges for the 1889 paper cards (see .card in globals.css). */}
+        <svg width="0" height="0" className="absolute" aria-hidden>
+          <filter id="rough">
+            <feTurbulence
+              type="fractalNoise"
+              baseFrequency="0.035"
+              numOctaves={3}
+              seed={4}
+              result="noise"
+            />
+            <feDisplacementMap
+              in="SourceGraphic"
+              in2="noise"
+              scale={7}
+              xChannelSelector="R"
+              yChannelSelector="G"
+            />
+          </filter>
+        </svg>
         <TerminalRain />
         <StarrySky />
         <Silhouettes />

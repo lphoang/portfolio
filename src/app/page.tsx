@@ -54,7 +54,7 @@ export default async function Home() {
 
       <section>
         <SectionLabel>on youtube</SectionLabel>
-        <div className="space-y-2">
+        <div className="paper-list space-y-2">
           {channels.map((channel, i) => (
             <ChannelTeaser
               key={channel.id}
@@ -72,7 +72,7 @@ export default async function Home() {
 
       <section>
         <SectionLabel>i ♥</SectionLabel>
-        <ul className="flex flex-wrap gap-2">
+        <ul className="paper-list flex flex-wrap gap-2">
           {profile.hobbies.map(hobby => (
             <li key={hobby} className="card px-3 py-1.5 text-sm">
               {hobby}

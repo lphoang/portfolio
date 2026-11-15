@@ -38,7 +38,14 @@ const PAIRS: Record<Era, [fg: string, bg: string][]> = {
     ['date', 'paper'],
     ['prussian', 'paper'],
     ['seal-ink', 'seal'],
-    ['badge-ink', 'badge']
+    ['badge-ink', 'badge'],
+    // The paper darkens toward its rim, where dates and titles can sit,
+    // and the wax seal is lighter at its highlight.
+    ['date', 'paper-rim'],
+    ['paper-ink', 'paper-rim'],
+    ['paper-muted', 'paper-rim'],
+    ['prussian', 'paper-rim'],
+    ['seal-ink', 'seal-light']
   ]
 }
 

@@ -20,6 +20,7 @@
   --badge-ink: #030805;
   --panel: #06110a;
   --line: #1f8a46;
+  --bar: #2aa84a;
   --card-title: #2bffc6;
   --era-display: var(--font-vt323);
   --era-sans: var(--font-plex-mono);
@@ -42,12 +43,15 @@
   --panel: #10285a;
   --line: #3d5a8f;
   --paper: #efe3c6;
+  --paper-rim: #dccaa8;
   --paper-ink: #3a2716;
   --paper-muted: #5b4329;
-  --date: #7a5a32;
+  --date: #6b4c28;
   --prussian: #1f3b70;
   --seal: #8e2b20;
   --seal-ink: #f6e7c8;
+  --seal-light: #b03d31;
+  --bar: #2f5aa0;
   --card-title: #1f3b70;
   --era-display: var(--font-playfair);
   --era-sans: var(--font-playfair);
@@ -81,6 +85,8 @@
 @utility card {
   --era-display: var(--era-card-title);
   --era-sans: var(--era-card-text);
+  /* Re-resolve the font here: body's font was resolved before the card changed it. */
+  font-family: var(--era-card-text), ui-monospace, monospace;
   background-color: var(--panel);
   border: 1px solid var(--line);
   border-radius: 6px;
@@ -198,6 +204,101 @@ body {
 /* Titles inside cards: mint on the terminal, Prussian blue on paper. */
 .card .font-display {
   color: var(--card-title);
+}
+
+/* ---------- cards ---------- */
+
+/* Terminal: a dark panel with a soft green glow and a gradient stripe on the left. */
+[data-era='terminal'] .card {
+  position: relative;
+  background:
+    linear-gradient(180deg, rgb(57 255 106 / 0.06), rgb(43 255 198 / 0.02)),
+    var(--panel);
+  box-shadow:
+    0 0 0 1px rgb(57 255 106 / 0.08),
+    0 0 22px rgb(57 255 106 / 0.12),
+    inset 0 0 30px rgb(57 255 106 / 0.05);
+}
+
+[data-era='terminal'] .card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(
+    var(--lime),
+    var(--accent),
+    var(--mint),
+    var(--teal)
+  );
+}
+
+/* 1889: aged paper with fibers, rough deckled edges and a darker rim, in ink. */
+[data-era='starry'] .card {
+  --ink: var(--paper-ink);
+  --muted: var(--paper-muted);
+  --accent: var(--prussian);
+  --num: var(--prussian);
+  --label: var(--paper-muted);
+  position: relative;
+  isolation: isolate;
+  color: var(--ink);
+  background: transparent;
+  border: none;
+  border-radius: 0;
+}
+
+[data-era='starry'] .card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9 .04' numOctaves='2' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45  0 0 0 0 .32  0 0 0 0 .16  0 0 0 .13 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E"),
+    radial-gradient(ellipse at 30% 20%, rgb(150 100 40 / 0.1), transparent 40%),
+    radial-gradient(ellipse at 50% 45%, var(--paper) 55%, var(--paper-rim) 100%);
+  filter: url(#rough) drop-shadow(0 6px 9px rgb(0 0 0 / 0.5));
+}
+
+/* Boxes inside a card (the stats in a dashboard) are plain, not cards again. */
+[data-era='terminal'] .card .card::before,
+[data-era='starry'] .card .card::before {
+  display: none;
+}
+
+[data-era='terminal'] .card .card {
+  box-shadow: none;
+}
+
+[data-era='starry'] .card .card {
+  border: 1px solid rgb(91 67 41 / 0.35);
+  background: rgb(255 255 255 / 0.25);
+}
+
+/* Lists on the home page look like loose sheets, slightly tilted. */
+[data-era='starry'] .paper-list > .card:nth-child(odd) {
+  rotate: -0.5deg;
+}
+
+[data-era='starry'] .paper-list > .card:nth-child(even) {
+  rotate: 0.4deg;
+}
+
+/* "Coming soon": a lime chip on the terminal, a red wax seal in 1889. */
+[data-era='starry'] .seal {
+  border-radius: 999px;
+  background: radial-gradient(
+    circle at 35% 30%,
+    var(--seal-light),
+    var(--seal) 60%,
+    #6b1c14
+  );
+  color: var(--seal-ink);
+  box-shadow:
+    inset 0 -2px 3px rgb(0 0 0 / 0.35),
+    0 2px 3px rgb(0 0 0 / 0.35);
 }
 
 /* ---------- backgrounds ---------- */

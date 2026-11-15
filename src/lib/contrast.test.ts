@@ -19,7 +19,9 @@ test('every era text pair meets WCAG AA', () => {
     'starry:label on bg',
     'starry:paper-ink on paper',
     'starry:prussian on paper',
-    'starry:seal-ink on seal'
+    'starry:seal-ink on seal',
+    'starry:date on paper-rim',
+    'starry:seal-ink on seal-light'
   ])
     expect(names).toContain(expected)
 
