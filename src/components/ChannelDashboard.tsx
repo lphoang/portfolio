@@ -10,17 +10,21 @@ type Props = { channel: ChannelConfig; stats: ChannelStats | null }
 
 const count = (n: number | null) => (n === null ? '—' : formatCompact(n))
 
-// A Shorts-style cover: the portrait frame, its views, then title, date and reactions.
-function VideoCard({ video }: { video: VideoStats }) {
+// "1 like", "3 likes", "— likes" (when the channel hides the number).
+const counted = (n: number | null, one: string, many: string) =>
+  `${count(n)} ${n === 1 ? one : many}`
+
+// One video per row: a small cover on the left, then title and the numbers.
+function VideoRow({ video }: { video: VideoStats }) {
   return (
     <li>
       <a
         href={video.url}
         target="_blank"
         rel="noreferrer"
-        className="group block"
+        className="group flex items-center gap-3 py-2.5"
       >
-        <div className="relative aspect-[9/16] overflow-hidden rounded-[4px] border border-line bg-panel">
+        <div className="relative aspect-[9/16] w-12 shrink-0 overflow-hidden rounded-[4px] border border-line bg-panel">
           {video.coverUrl && !video.portrait && (
             // Landscape videos: a blurred copy fills the tile behind the whole cover.
             // eslint-disable-next-line @next/next/no-img-element
@@ -28,7 +32,7 @@ function VideoCard({ video }: { video: VideoStats }) {
               src={video.coverUrl}
               alt=""
               loading="lazy"
-              className="absolute inset-0 size-full scale-110 object-cover opacity-50 blur-md"
+              className="absolute inset-0 size-full scale-110 object-cover opacity-50 blur-sm"
             />
           )}
           {video.coverUrl && (
@@ -38,24 +42,24 @@ function VideoCard({ video }: { video: VideoStats }) {
               src={video.coverUrl}
               alt=""
               loading="lazy"
-              className={`relative size-full transition-transform duration-300 group-hover:scale-105 ${
+              className={`relative size-full ${
                 video.portrait ? 'object-cover' : 'object-contain'
               }`}
             />
           )}
-          <span className="absolute bottom-1 left-1 rounded bg-black/75 px-1.5 py-0.5 font-label text-[10px] text-white">
-            {count(video.views)} views
-          </span>
         </div>
-        <p className="mt-1.5 line-clamp-2 text-xs font-semibold break-words group-hover:text-accent">
-          {video.title}
-        </p>
+        <div className="min-w-0">
+          <p className="line-clamp-2 font-semibold break-words group-hover:text-accent">
+            {video.title}
+          </p>
+          <p className="mt-1 font-label text-[10px] text-muted">
+            {formatDate(video.publishedAt)} ·{' '}
+            {counted(video.views, 'view', 'views')} ·{' '}
+            {counted(video.likes, 'like', 'likes')} ·{' '}
+            {counted(video.comments, 'comment', 'comments')}
+          </p>
+        </div>
       </a>
-      <div className="mt-0.5 flex flex-wrap gap-x-2 font-label text-[10px] text-muted">
-        <span>{formatDate(video.publishedAt)}</span>
-        <span>{count(video.likes)} likes</span>
-        <span>{count(video.comments)} comments</span>
-      </div>
     </li>
   )
 }
@@ -108,9 +112,9 @@ export function ChannelDashboard({ channel, stats }: Props) {
             ) : (
               <>
                 <ViewsChart videos={stats.latest} />
-                <ol className="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5">
+                <ol className="mt-3 divide-y divide-line">
                   {stats.latest.map(video => (
-                    <VideoCard key={video.id} video={video} />
+                    <VideoRow key={video.id} video={video} />
                   ))}
                 </ol>
               </>
