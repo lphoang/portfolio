@@ -47,18 +47,23 @@ const BLOCKS: Record<Era, RegExp> = {
   starry: /\[data-era=['"]starry['"]\]\s*\{([^}]*)\}/
 }
 
-// Reads the era color variables out of the stylesheet and lists the pairs to check.
+// The #rrggbb color variables of one era, read from the stylesheet.
+export function eraVars(css: string, era: Era): Record<string, string> {
+  const block = css.match(BLOCKS[era])?.[1] ?? ''
+  return Object.fromEntries(
+    [...block.matchAll(/--([\w-]+):\s*(#[0-9a-fA-F]{6})\b/g)].map(m => [
+      m[1],
+      m[2]
+    ])
+  )
+}
+
+// Lists the text-on-background pairs to check, with their colors from the stylesheet.
 export function eraTextPairs(
   css: string
 ): { era: Era; name: string; fg: string; bg: string; min: number }[] {
   return (Object.keys(PAIRS) as Era[]).flatMap(era => {
-    const block = css.match(BLOCKS[era])?.[1] ?? ''
-    const vars = Object.fromEntries(
-      [...block.matchAll(/--([\w-]+):\s*(#[0-9a-fA-F]{6})\b/g)].map(m => [
-        m[1],
-        m[2]
-      ])
-    )
+    const vars = eraVars(css, era)
     return PAIRS[era].map(([fg, bg]) => ({
       era,
       name: `${fg} on ${bg}`,

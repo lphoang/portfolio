@@ -9,6 +9,9 @@ import {
 
 import { Craft } from '@/components/Craft'
 import { Navbar } from '@/components/Navbar'
+import { Silhouettes } from '@/components/backgrounds/Silhouettes'
+import { StarrySky } from '@/components/backgrounds/StarrySky'
+import { TerminalRain } from '@/components/backgrounds/TerminalRain'
 import { eraScript } from '@/lib/era'
 
 import './globals.css'
@@ -63,8 +66,13 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: eraScript }} />
       </head>
       <body className="min-h-dvh antialiased">
+        <TerminalRain />
+        <StarrySky />
+        <Silhouettes />
+        <div className="sky-scrim starry-only" aria-hidden />
+        <div className="crt terminal-only" aria-hidden />
         <Navbar />
-        <main className="mx-auto w-full max-w-3xl px-4 pt-6 pb-16 sm:px-6">
+        <main className="relative z-[4] mx-auto w-full max-w-3xl px-4 pt-6 pb-16 sm:px-6">
           {children}
         </main>
         <Craft />
