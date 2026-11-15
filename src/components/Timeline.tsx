@@ -5,7 +5,7 @@ type Props = { jobs: Job[]; born: Born }
 
 export function Timeline({ jobs, born }: Props) {
   return (
-    <ol className="space-y-3">
+    <ol className="paper-list space-y-3">
       {jobs.map(job => (
         <li
           key={job.company}

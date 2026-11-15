@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="en" data-era="starry">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eras mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,600&family=Special+Elite&family=VT323&family=IBM+Plex+Mono:wght@400;600&family=JetBrains+Mono:wght@700;800&family=Doto:wght@900&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root { --dur: 1.6s; --ease: cubic-bezier(.45,.05,.55,.95); }
+  [data-era="starry"] {
+    --bg: #0a1a3f; --ink: #f3e9d2; --muted: #cdbf9c; --accent: #f4d35e; --num: #f7e48b;
+    --badge: #f4d35e; --badge-ink: #0a1a3f;
+    --f-display: 'Playfair Display', serif; --f-body: 'Playfair Display', serif;
+    --f-label: 'Special Elite', monospace; --f-num: 'Special Elite', monospace; --f-type: 'Special Elite', monospace;
+    --paper-ink: #3a2716; --paper-muted: #5b4329; --prussian: #1f3b70;
+  }
+  [data-era="terminal"] {
+    --bg: #030805; --ink: #d4ffe0; --muted: #7fcf98; --accent: #39ff6a; --lime: #c6ff3d; --mint: #2bffc6; --teal: #19d3c5;
+    --num: #8dff5a; --badge: #c6ff3d; --badge-ink: #030805;
+    --f-display: 'VT323', monospace; --f-body: 'IBM Plex Mono', monospace;
+    --f-label: 'IBM Plex Mono', monospace; --f-num: 'VT323', monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: var(--bg); color: var(--ink); font-family: var(--f-body); min-height: 100vh; overflow-x: hidden; }
+  [data-era="starry"] body { font-size: 17px; }
+  [data-era="terminal"] body { font-size: 15px; }
+
+  /* ---------- backgrounds ---------- */
+  #sky { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; }
+  .cypress, .village { position: fixed; z-index: 1; pointer-events: none; }
+  .cypress { left: -10px; bottom: 0; height: 78vh; }
+  .village { left: 0; right: 0; bottom: 0; width: 100%; height: 14vh; }
+  #rain { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; }
+  #vignette { position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,.75) 100%); }
+  #scan { position: fixed; inset: 0; z-index: 3; pointer-events: none; animation: flicker 4s infinite steps(1);
+    background: repeating-linear-gradient(0deg, rgba(57,255,106,.045) 0 1px, transparent 1px 3px); }
+  #scan::after { content: ''; position: absolute; left: 0; right: 0; height: 140px; top: -140px;
+    background: linear-gradient(transparent, rgba(57,255,106,.07), transparent); animation: sweep 7s linear infinite; }
+  @keyframes sweep { to { top: 100%; } }
+  @keyframes flicker { 0%, 97%, 100% { opacity: 1; } 98% { opacity: .85; } }
+  [data-era="starry"] #rain, [data-era="starry"] #vignette, [data-era="starry"] #scan { display: none; }
+  [data-era="terminal"] #sky, [data-era="terminal"] .cypress, [data-era="terminal"] .village { display: none; }
+
+  /* ---------- layout ---------- */
+  nav { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 16px; padding: 12px max(16px, calc(50% - 360px)); }
+  [data-era="starry"] nav { background: rgba(10,26,63,.72); border-bottom: 1px solid rgba(241,217,138,.35); backdrop-filter: blur(6px); }
+  [data-era="starry"] .logo { font-style: italic; font-weight: 600; }
+  [data-era="terminal"] nav { background: rgba(3,8,5,.82); border-bottom: 1px solid #1f8a46; backdrop-filter: blur(6px); }
+  [data-era="terminal"] .logo { font-size: 26px; text-shadow: 0 0 8px rgba(57,255,106,.7); }
+  .logo { margin-right: auto; font-family: var(--f-display); font-weight: 800; font-size: 20px; color: var(--accent); text-decoration: none; }
+  nav a.link { font-family: var(--f-label); font-size: 13px; color: var(--ink); text-decoration: none; letter-spacing: .06em; }
+  .toggle { display: inline-flex; border-radius: 999px; overflow: hidden; cursor: pointer; padding: 0; font-family: var(--f-label); font-size: 12px; }
+  .toggle span { padding: 5px 10px; }
+  [data-era="starry"] .toggle { border: 1px solid #efe3c6; background: transparent; color: var(--ink); }
+  [data-era="starry"] .toggle .y1889 { background: #efe3c6; color: var(--prussian); }
+  [data-era="terminal"] .toggle { border: 1px solid var(--accent); background: transparent; color: var(--ink); }
+  [data-era="terminal"] .toggle .y2077 { background: var(--accent); color: #030805; }
+
+  main { position: relative; z-index: 4; max-width: 720px; margin: 0 auto; padding: 8px 16px 80px; }
+  .hero { text-align: center; }
+  .fig { width: 288px; height: 288px; margin: 0 auto; border-radius: 50%; }
+  [data-era="starry"] .fig { background: radial-gradient(circle, rgba(247,228,139,.28), transparent 68%); }
+  [data-era="terminal"] .fig { background: radial-gradient(circle, rgba(57,255,106,.2), rgba(43,255,198,.07) 45%, transparent 70%); }
+  #figure { width: 100%; height: 100%; display: block; }
+  h1 { margin: 6px 0 4px; font-family: var(--f-display); position: relative; display: inline-block; }
+  [data-era="starry"] h1 { font-size: 44px; font-style: italic; font-weight: 600; color: #f6edd6; text-shadow: 0 0 18px rgba(244,211,94,.3); }
+  [data-era="terminal"] h1 { font-size: 60px; font-weight: 400; line-height: 1; color: var(--accent); text-shadow: 0 0 6px rgba(57,255,106,.9), 0 0 22px rgba(57,255,106,.45); }
+  [data-era="terminal"] h1::after { content: '█'; margin-left: 4px; color: var(--lime); animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  [data-era="terminal"] .tagline::before { content: '$ echo '; color: var(--mint); }
+  .tagline { color: var(--muted); margin: 0; }
+  [data-era="starry"] .tagline { font-style: italic; }
+  .intro { max-width: 560px; margin: 14px auto 0; line-height: 1.55; }
+
+  section { margin-top: 34px; }
+  .label { font-family: var(--f-label); color: var(--accent); margin: 0 0 12px; font-size: 14px; }
+  [data-era="starry"] .label { color: #f1d98a; text-transform: uppercase; letter-spacing: .12em; font-size: 14px; }
+  [data-era="terminal"] .label { color: var(--lime); }
+  [data-era="terminal"] .label::before { content: '> '; color: var(--mint); }
+  [data-era="terminal"] .label::after { content: '_'; color: var(--accent); animation: blink 1s steps(1) infinite; }
+  .stack { display: grid; gap: 14px; }
+
+  /* ---------- cards ---------- */
+  .card { position: relative; padding: 16px 18px; }
+  [data-era="starry"] .card { isolation: isolate; color: var(--paper-ink); font-family: var(--f-type); }
+  [data-era="starry"] .card::before { content: ''; position: absolute; inset: 0; z-index: -1;
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9 .04' numOctaves='2' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45  0 0 0 0 .32  0 0 0 0 .16  0 0 0 .13 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E"),
+      radial-gradient(ellipse at 30% 20%, rgba(150,100,40,.10), transparent 40%),
+      radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(140,95,40,.28) 100%),
+      #efe3c6;
+    filter: url(#rough) drop-shadow(0 6px 9px rgba(0,0,0,.5)); }
+  [data-era="starry"] .stack > .card:nth-child(odd) { transform: rotate(-.5deg); }
+  [data-era="starry"] .stack > .card:nth-child(even) { transform: rotate(.4deg); }
+  [data-era="starry"] .card h3 { font-family: var(--f-type); font-size: 17px; color: var(--prussian); }
+  [data-era="starry"] .card p, [data-era="starry"] .card .small { color: var(--paper-muted); }
+  [data-era="starry"] .card .when { color: #7a5a32; }
+  [data-era="starry"] .card .num { color: var(--prussian); }
+  [data-era="terminal"] .card {
+    background: linear-gradient(180deg, rgba(57,255,106,.06), rgba(43,255,198,.02)), #06110a;
+    border: 1px solid #1f8a46;
+    box-shadow: 0 0 0 1px rgba(57,255,106,.08), 0 0 22px rgba(57,255,106,.12), inset 0 0 30px rgba(57,255,106,.05);
+  }
+  [data-era="terminal"] .card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+    background: linear-gradient(var(--lime), var(--accent), var(--mint), var(--teal)); }
+  .when { font-family: var(--f-label); color: var(--muted); font-size: 12px; }
+  [data-era="starry"] .when { font-size: 13px; }
+  .card h3 { margin: 2px 0 4px; font-family: var(--f-display); font-size: 19px; }
+  [data-era="terminal"] .card h3 { font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 15px; color: var(--mint); }
+  .card p { margin: 0; color: var(--muted); line-height: 1.5; }
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .num { font-family: var(--f-num); color: var(--num); font-size: 26px; line-height: 1; }
+  [data-era="terminal"] .num { font-size: 34px; text-shadow: 0 0 8px rgba(141,255,90,.8); }
+  .small { font-family: var(--f-label); font-size: 12px; color: var(--muted); }
+  .badge { font-family: var(--f-label); font-size: 12px; padding: 3px 9px; background: var(--badge); color: var(--badge-ink); }
+  [data-era="starry"] .badge { border-radius: 999px; color: #f6e7c8; padding: 4px 11px;
+    background: radial-gradient(circle at 35% 30%, #c2463a, #8e2b20 60%, #6b1c14); box-shadow: inset 0 -2px 3px rgba(0,0,0,.35), 0 2px 3px rgba(0,0,0,.35); }
+
+  /* ---------- the craft and the curtain ---------- */
+  .ship { position: fixed; top: 18vh; width: 220px; height: 100px; z-index: 50; display: none; pointer-events: none; view-transition-name: ship; }
+  .ship.at-left { display: block; left: -260px; }
+  .ship.at-right { display: block; left: calc(100vw + 40px); }
+  ::view-transition-group(ship) { animation-duration: var(--dur); animation-timing-function: var(--ease); }
+  ::view-transition-old(root) { animation: none; }
+  ::view-transition-new(root) { animation: wipe var(--dur) var(--ease) both; }
+  @keyframes wipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+  /* Fallback when the browser can't do view transitions: the craft just flies over. */
+  .ship.fly { display: block; left: -260px; animation: fly var(--dur) var(--ease) forwards; }
+  @keyframes fly { to { left: calc(100vw + 40px); } }
+
+  .note { position: fixed; right: 12px; bottom: 12px; z-index: 60; max-width: 300px; font: 12px/1.45 system-ui, sans-serif;
+    background: rgba(0,0,0,.78); color: #fff; padding: 10px 12px; border-radius: 8px; }
+  .note b { color: #ffd76a; }
+</style>
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="3" seed="4" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G"/></filter>
+  </svg>
+  <canvas id="sky"></canvas>
+  <svg class="cypress" viewBox="0 0 120 520" preserveAspectRatio="xMinYMax meet" aria-hidden="true">
+    <path d="M60 0 C 74 70, 66 120, 82 170 C 98 230, 74 260, 92 320 C 110 380, 96 430, 112 520 L 8 520 C 22 440, 12 400, 26 340 C 40 280, 22 250, 38 190 C 50 140, 42 80, 60 0 Z" fill="#0e1a12"/>
+    <path d="M58 40 C 66 90, 56 130, 70 180 M46 220 C 56 260, 44 300, 58 350 M76 260 C 88 310, 80 350, 94 410" stroke="#1d3324" stroke-width="5" fill="none" stroke-linecap="round"/>
+  </svg>
+  <svg class="village" viewBox="0 0 1200 140" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 140 L0 96 C 120 80, 220 110, 340 92 L 360 92 L 360 70 L 400 52 L 440 70 L 440 92 L 520 92 L 520 64 L 556 64 L 556 92 L 610 92 L 640 14 L 670 92 L 760 88 L 760 66 L 800 48 L 840 66 L 840 90 C 980 80, 1080 104, 1200 90 L 1200 140 Z" fill="#081227"/>
+    <g fill="#f4d35e" opacity=".8"><rect x="378" y="74" width="7" height="7"/><rect x="536" y="72" width="7" height="7"/><rect x="784" y="70" width="7" height="7"/><rect x="420" y="76" width="6" height="6"/></g>
+  </svg>
+  <canvas id="rain"></canvas><div id="vignette"></div><div id="scan"></div>
+
+  <nav>
+    <a class="logo" href="#">leph</a>
+    <a class="link" href="#">Channels</a>
+    <a class="link" href="#">Apps</a>
+    <button class="toggle" id="toggle" type="button" aria-label="Switch to the 1889 theme">
+      <span class="y1889">1889</span><span class="y2077">&gt;_</span>
+    </button>
+  </nav>
+
+  <main>
+    <section class="hero" style="margin-top:8px">
+      <div class="fig" role="img" aria-label="3D figure of Hoang"><canvas id="figure"></canvas></div>
+      <h1 data-text="Le Phuoc Hoang">Le Phuoc Hoang</h1>
+      <p class="tagline">Developer, dreamer, everything all at once.</p>
+      <p class="intro">Software engineer in Da Nang, Vietnam. I build back-end and front-end web apps, mostly with Java and JavaScript. I also make YouTube videos and I'm building my first app, 2Eat.</p>
+    </section>
+
+    <section>
+      <h2 class="label">work</h2>
+      <div class="stack">
+        <div class="card"><div class="when">2025 – now</div><h3>mgm technology partners Vietnam</h3><p>Software Engineer · Da Nang</p></div>
+        <div class="card"><div class="when">2023 – 2025</div><h3>mesoneer</h3><p>Software Engineer · Da Nang</p></div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="label">on youtube</h2>
+      <div class="stack">
+        <div class="card row"><h3>mike.thedreamER</h3><span class="small"><span class="num">4</span> subscribers</span></div>
+        <div class="card row"><h3>The Coding Mate</h3><span class="small"><span class="num">7</span> subscribers</span></div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="label">building</h2>
+      <div class="card"><div class="row"><h3>2Eat</h3><span class="badge">Coming soon</span></div>
+        <p>A free meal planner for iPhone and Android that plans your meals to hit your daily protein and calorie targets within your grocery budget.</p></div>
+    </section>
+  </main>
+
+  <div class="ship" id="ship" aria-hidden="true"></div>
+  <div class="note"><b>Mockup.</b> Click <b>1889 | &gt;_</b> in the menu to switch eras. Drag the figure to spin it. Numbers are your real channel stats.</div>
+
+<script>
+// ---------- era switching with the flying craft ----------
+const AIRSHIP = `<svg viewBox="0 0 220 100" width="220" height="100">
+  <g fill="#d9d2c0" opacity=".55"><circle cx="10" cy="44" r="7"/><circle cx="2" cy="36" r="5"/><circle cx="16" cy="32" r="4"/></g>
+  <path d="M30 40 L14 22 L22 40 L14 58 Z" fill="#7d5a32"/>
+  <ellipse cx="112" cy="40" rx="86" ry="28" fill="#c9a46a" stroke="#6b4a2b" stroke-width="3"/>
+  <path d="M40 40 H184 M56 22 C 100 30, 130 30, 170 22 M56 58 C 100 50, 130 50, 170 58" stroke="#8a6a3c" stroke-width="2" fill="none"/>
+  <path d="M86 66 L92 76 M138 66 L132 76" stroke="#4a3220" stroke-width="2"/>
+  <rect x="86" y="74" width="50" height="15" rx="3" fill="#5a3b22" stroke="#3a2614" stroke-width="2"/>
+  <g fill="#f4d35e"><rect x="94" y="78" width="7" height="6"/><rect x="107" y="78" width="7" height="6"/><rect x="120" y="78" width="7" height="6"/></g>
+  <path d="M196 40 L206 26 L206 54 Z" fill="#7a1f2b"/></svg>`
+// An original pixel-art ship, drawn from a tiny map (G body, L wings, C cockpit, F flame).
+const SHIP_MAP = [
+  '......GG........',
+  '.....GGGG.......',
+  'F.LL.GGGGGG.....',
+  'FFLLGGGGGGGGCC..',
+  'FFLLGGGGGGGGGCCC',
+  'FFLLGGGGGGGGGCCC',
+  'FFLLGGGGGGGGCC..',
+  'F.LL.GGGGGG.....',
+  '.....GGGG.......',
+  '......GG........'
+]
+const SHIP_COLORS = { G: '#39ff6a', L: '#c6ff3d', C: '#2bffc6', F: '#ffcc33' }
+const SPACESHIP = `<svg viewBox="0 0 160 100" width="220" height="138" style="filter: drop-shadow(0 0 6px #39ff6a)">${
+  SHIP_MAP.flatMap((row, y) => [...row].map((ch, x) => SHIP_COLORS[ch] ? `<rect x="${x * 10}" y="${y * 10}" width="10" height="10" fill="${SHIP_COLORS[ch]}"/>` : '')).join('')
+}</svg>`
+
+const ship = document.getElementById('ship')
+const toggle = document.getElementById('toggle')
+const era = () => document.documentElement.dataset.era
+function applyEra(next) {
+  document.documentElement.dataset.era = next
+  toggle.setAttribute('aria-label', next === 'terminal' ? 'Switch to the 1889 theme' : 'Switch to the terminal theme')
+  window.dispatchEvent(new CustomEvent('era', { detail: next }))
+}
+toggle.addEventListener('click', async () => {
+  const next = era() === 'terminal' ? 'starry' : 'terminal'
+  ship.innerHTML = next === 'starry' ? AIRSHIP : SPACESHIP
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return applyEra(next)
+  if (!document.startViewTransition) {
+    applyEra(next); ship.className = 'ship fly'
+    setTimeout(() => (ship.className = 'ship'), 1700); return
+  }
+  ship.className = 'ship at-left'
+  const vt = document.startViewTransition(() => { applyEra(next); ship.className = 'ship at-right' })
+  await vt.finished
+  ship.className = 'ship'
+})
+
+// ---------- terminal: faint falling characters ----------
+;(function rain() {
+  const c = document.getElementById('rain'), ctx = c.getContext('2d')
+  const GLYPHS = '01<>/{}[]=+*#$%&ABCDEF'
+  const GREENS = ['#39ff6a', '#c6ff3d', '#2bffc6', '#19d3c5', '#7dff5a']
+  let W, H, cols = [], size = 16, last = 0
+  function resize() {
+    W = c.width = innerWidth; H = c.height = innerHeight
+    cols = Array.from({ length: Math.ceil(W / size) }, () => ({ y: Math.random() * H, speed: .4 + Math.random() * .9, color: GREENS[(Math.random() * GREENS.length) | 0] }))
+    ctx.fillStyle = '#030805'; ctx.fillRect(0, 0, W, H)
+  }
+  function frame(t) {
+    if (document.documentElement.dataset.era === 'terminal' && t - last > 50) {
+      last = t
+      ctx.fillStyle = 'rgba(3,8,5,.12)'; ctx.fillRect(0, 0, W, H)
+      ctx.font = `${size}px 'VT323', monospace`
+      cols.forEach((col, i) => {
+        ctx.globalAlpha = .28; ctx.fillStyle = col.color
+        ctx.fillText(GLYPHS[(Math.random() * GLYPHS.length) | 0], i * size, col.y)
+        col.y += size * col.speed
+        if (col.y > H + 20 && Math.random() > .97) col.y = -20
+      })
+      ctx.globalAlpha = 1
+    }
+    requestAnimationFrame(frame)
+  }
+  addEventListener('resize', resize); resize(); requestAnimationFrame(frame)
+})()
+
+// ---------- 1889: a swirling, painted night sky ----------
+;(function sky() {
+  const c = document.getElementById('sky'), ctx = c.getContext('2d')
+  let W, H, parts = [], t = 0
+  // Kept out of the middle column so the text stays readable.
+  const STARS = [[.12,.16,26],[.27,.07,18],[.73,.09,16],[.86,.32,20],[.2,.4,14],[.92,.08,12],[.08,.62,12],[.84,.58,14],[.15,.84,12],[.9,.8,12]]
+  const VORTICES = [[.42,.32,.16],[.6,.36,.12],[.22,.24,.1]]
+  const BLUES = ['#1d3f8f','#2a56ad','#3a6fc0','#1a2f6e','#5b86c9','#203e86','#7fa6d9']
+  function resize() {
+    W = c.width = innerWidth; H = c.height = innerHeight
+    const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#0b1d48'); g.addColorStop(1, '#0a1a3f')
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H)
+    parts = Array.from({ length: Math.min(900, (W * H) / 1400) }, spawn)
+  }
+  function spawn() { return { x: Math.random() * W, y: Math.random() * H * .8, life: 60 + Math.random() * 120, c: BLUES[(Math.random() * BLUES.length) | 0] } }
+  function field(x, y) {
+    let vx = 1, vy = .35 * Math.sin(x * .004 + t * .002) + .2 * Math.cos(y * .006)
+    for (const [cx, cy, r] of VORTICES) {
+      const dx = x - cx * W, dy = y - cy * H, R = r * Math.min(W, H) * 1.6, d = Math.hypot(dx, dy) || 1
+      const s = 2.6 * Math.exp(-((d / R) ** 2)); vx += (-dy / d) * s; vy += (dx / d) * s
+    }
+    const m = Math.hypot(vx, vy); return [vx / m, vy / m]
+  }
+  function frame() {
+    if (document.documentElement.dataset.era === 'starry') {
+      t++
+      ctx.fillStyle = 'rgba(10,26,63,0.035)'; ctx.fillRect(0, 0, W, H)
+      ctx.lineCap = 'round'
+      for (const p of parts) {
+        const [vx, vy] = field(p.x, p.y), nx = p.x + vx * 2.2, ny = p.y + vy * 2.2
+        ctx.strokeStyle = p.c; ctx.lineWidth = 2.4; ctx.globalAlpha = .55
+        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(nx, ny); ctx.stroke()
+        p.x = nx; p.y = ny
+        if (--p.life < 0 || p.x > W + 10 || p.y < -10 || p.y > H) Object.assign(p, spawn(), { x: Math.random() < .5 ? -5 : Math.random() * W })
+      }
+      ctx.globalAlpha = 1
+      for (const [sx, sy, r] of STARS) {
+        const x = sx * W, y = sy * H, pulse = 1 + .12 * Math.sin(t * .03 + sx * 9)
+        const g = ctx.createRadialGradient(x, y, 0, x, y, r * 2.4 * pulse)
+        g.addColorStop(0, 'rgba(255,246,200,.95)'); g.addColorStop(.25, 'rgba(244,211,94,.75)'); g.addColorStop(1, 'rgba(244,211,94,0)')
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r * 2.4 * pulse, 0, 7); ctx.fill()
+        ctx.strokeStyle = 'rgba(247,228,139,.35)'; ctx.lineWidth = 2
+        ctx.beginPath(); ctx.arc(x, y, r * 1.3 * pulse, 0, 7); ctx.stroke()
+      }
+      const mx = .9 * W, my = .14 * H, mr = Math.min(W, H) * .05
+      const mg = ctx.createRadialGradient(mx, my, 0, mx, my, mr * 2.6)
+      mg.addColorStop(0, 'rgba(255,214,90,.9)'); mg.addColorStop(.4, 'rgba(244,180,60,.5)'); mg.addColorStop(1, 'rgba(244,180,60,0)')
+      ctx.fillStyle = mg; ctx.beginPath(); ctx.arc(mx, my, mr * 2.6, 0, 7); ctx.fill()
+      ctx.fillStyle = '#ffd65a'; ctx.beginPath(); ctx.arc(mx, my, mr, 0, 7); ctx.fill()
+      ctx.fillStyle = '#c98a1c'; ctx.beginPath(); ctx.arc(mx + mr * .45, my - mr * .2, mr * .85, 0, 7); ctx.fill()
+    }
+    requestAnimationFrame(frame)
+  }
+  addEventListener('resize', resize); resize(); frame()
+})()
+</script>
+
+<script type="module">
+import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js'
+
+const COL = {
+  skin: '#e9b98f', nose: '#dfa983', lip: '#c4746a', lipTop: '#d48a7c', eye: '#141010', sclera: '#f7f3ee', iris: '#2a1c16', glint: '#ffffff',
+  hair: '#1d1714', hairHi: '#3a2a20', hairLo: '#100c0a',
+  frame: '#6f6440', pants: '#2b3442', shoe: '#ecebe4', sole: '#b8b6ad', watch: '#1a1a1a', headset: '#22252c', cushion: '#3a3f4a',
+  shell: '#d9d6c8', screen: '#8bac0f', screenInk: '#306230', dpad: '#1b1b1b', btn: '#7b1f4a',
+  phone: '#1b1b1b', case: '#e05a8a', lens: '#111111', rec: '#ff3b3b'
+};
+const TEE = { dev: '#1f1f22', player: '#f4f4ef', creator: '#22306b' };
+
+const sq = v => v * v;
+const ell = (x, y, z, cx, cy, cz, rx, ry, rz) => sq((x - cx) / rx) + sq((y - cy) / ry) + sq((z - cz) / rz) <= 1;
+const supell = (x, y, z, cx, cy, cz, rx, ry, rz, e) =>
+  Math.abs((x - cx) / rx) ** e + Math.abs((y - cy) / ry) ** e + Math.abs((z - cz) / rz) ** e <= 1;
+const rbox = (x, y, z, cx, cy, cz, hx, hy, hz, r) => {
+  const qx = Math.abs(x - cx) - hx + r, qy = Math.abs(y - cy) - hy + r, qz = Math.abs(z - cz) - hz + r;
+  return Math.hypot(Math.max(qx, 0), Math.max(qy, 0), Math.max(qz, 0)) + Math.min(Math.max(qx, qy, qz), 0) - r <= 0;
+};
+const seg = (x, y, z, ax, ay, az, bx, by, bz, r) => {
+  const abx = bx - ax, aby = by - ay, abz = bz - az;
+  const t = Math.max(0, Math.min(1, ((x - ax) * abx + (y - ay) * aby + (z - az) * abz) / (abx * abx + aby * aby + abz * abz)));
+  return Math.hypot(x - ax - abx * t, y - ay - aby * t, z - az - abz * t) <= r;
+};
+const faceZ = (x, y) => { const k = 1 - Math.abs(x / 6.5) ** 2.6 - Math.abs((y - 15.6) / 6) ** 2.6; return k > 0 ? 5.6 * k ** (1 / 2.6) : 0; };
+const noise = (x, y, z) => { const n = Math.sin(x * 12.9898 + y * 78.233 + z * 37.719) * 43758.5453; return n - Math.floor(n); };
+const TUFTS = [[-4.4, 20.6, -2.2], [-3.0, 21.3, 0.6], [-1.4, 21.6, -1.6], [0.2, 21.9, 1.4], [1.9, 21.7, -0.4], [3.4, 21.3, 1.8],
+  [4.6, 20.6, -1.2], [-2.2, 21.5, 3.2], [1.2, 21.8, 3.6], [-0.4, 21.3, -3.4], [2.8, 20.8, -3.0], [-3.8, 20.6, 2.8],
+  [-0.9, 22.0, 2.2], [2.6, 21.6, 3.0], [4.2, 20.9, 2.4]];
+const hairShade = (x, y, z) => { const n = noise(x, y, z); return n > 0.9 ? COL.hairHi : n < 0.08 ? COL.hairLo : COL.hair; };
+
+function colorAt(v, x, y, z, s) {
+  const th = Math.max(0.5, s * 1.01);
+  const ax = Math.abs(x);
+  const hold = v !== 'dev';
+
+  // glasses: open square frames that wrap just in front of the face, bridge, temples to the ears
+  const zf = faceZ(Math.min(ax, 6.2), y) + 0.25;
+  if (z >= zf && z <= zf + th) {
+    for (const sx of [-1, 1]) {
+      const cx = sx * 2.9, cy = 14.6;
+      const outer = Math.abs(x - cx) <= 2.3 && Math.abs(y - cy) <= 1.7;
+      const inner = Math.abs(x - cx) <= 2.3 - th && Math.abs(y - cy) <= 1.7 - th;
+      if (outer && !inner) return COL.frame;
+    }
+    if (ax <= 0.6 && y >= 16.3 - th && y <= 16.3) return COL.frame;
+    if (ax >= 5.2 && ax <= 6.55 + th && y >= 16.3 - th && y <= 16.3) return COL.frame;
+  }
+  if (ax >= 6.55 && ax <= 6.55 + th && y >= 16.3 - th && y <= 16.3 && z >= 0.6 && z <= 3.2) return COL.frame;
+
+  // headset with mic (dev mode)
+  if (v === 'dev') {
+    if (ax >= 6.9 && ax <= 8.4 && Math.hypot(y - 14.3, z - 0.3) <= 2.2) return ax <= 7.3 ? COL.cushion : COL.headset;
+    const r = Math.hypot(x, y - 15.5);
+    if (y >= 15.8 && r >= 8.3 && r <= 8.3 + th * 1.6 && Math.abs(z - 0.3) <= 0.55 + s / 2) return COL.headset;
+    if (ell(x, y, z, 3.2, 11.4, 6.9, 0.7, 0.6, 0.6)) return COL.headset;
+    if (seg(x, y, z, 8.0, 12.6, 1.8, 3.4, 11.4, 6.9, 0.35 + s / 2)) return COL.cushion;
+  }
+
+  // hands and arms
+  if (hold) {
+    for (const sx of [-1, 1]) {
+      if (ell(x, y, z, sx * 3.9, 5.7, 3.6, 0.95, 1.0, 0.9)) return COL.skin;
+    }
+    if (v === 'player' && rbox(x, y, z, 0, 6.4, 3.7, 2.9, 2.3, 0.5, 0.35)) {
+      if (z > 3.9) {
+        if (ax <= 2.0 && y >= 6.8 && y <= 8.2) return (Math.abs(ax - 0.8) <= 0.3 && Math.abs(y - 7.7) <= 0.3) ? COL.screenInk : COL.screen;
+        if ((Math.abs(x + 1.6) <= 0.9 && Math.abs(y - 5.3) <= 0.3) || (Math.abs(x + 1.6) <= 0.3 && Math.abs(y - 5.3) <= 0.9)) return COL.dpad;
+        if (Math.hypot(x - 1.0, y - 5.0) <= 0.5 || Math.hypot(x - 2.0, y - 5.6) <= 0.5) return COL.btn;
+      }
+      return COL.shell;
+    }
+    if (v === 'creator' && rbox(x, y, z, 0, 6.2, 3.6, 3.0, 1.6, 0.4, 0.3)) {
+      if (z > 3.7) {
+        if (Math.hypot(x + 2.1, y - 7.0) <= 0.45 || Math.hypot(x + 2.1, y - 5.9) <= 0.45 || Math.hypot(x + 1.1, y - 7.0) <= 0.45) return COL.lens;
+        if (Math.hypot(x - 2.2, y - 7.1) <= 0.35) return COL.rec;
+        return COL.case;
+      }
+      return COL.phone;
+    }
+    for (const sx of [-1, 1]) {
+      if (seg(x, y, z, sx * 5.1, 8.0, 0, sx * 5.0, 6.0, 0.2, 0.95)) return COL.skin;
+      if (seg(x, y, z, sx * 5.0, 5.9, 0.2, sx * 4.2, 5.6, 3.2, 0.9)) {
+        if (sx < 0 && z >= 1.9 && z <= 2.5 + s / 2) return COL.watch;
+        return COL.skin;
+      }
+    }
+  }
+
+  // hair: short tapered sides, uneven side-swept fringe, swept-up volume on top-front, textured tufts
+  if (supell(x, y, z, 0, 16.4, -0.3, 7.25, 7.0, 6.5, 2.6)) {
+    const front = z > 2.2;
+    const edge = 18.5 + 0.22 * x + 0.3 * Math.sin(x * 1.9);
+    const top = front ? y > edge : y > 17.4;
+    const side = ax > 5.7 && y > 16.8 && z < 3.8;
+    const back = z < -2.0 && y > 10.8;
+    if (top || side || back) return hairShade(x, y, z);
+  }
+  if (ell(x, y, z, 0.4, 21.9, 3.0, 5.6, 2.2, 3.2)) return hairShade(x, y, z);
+  for (const [tx, ty, tz] of TUFTS) {
+    if (ell(x, y, z, tx, ty + 0.7, tz, 1.7, 1.3, 1.7)) return hairShade(x, y, z);
+  }
+
+  // nose, then face painted onto the head
+  if (rbox(x, y, z, 0, 13.6, 5.6, 0.55, 0.9, 0.5, 0.2)) return COL.nose;
+  if (supell(x, y, z, 0, 15.6, 0, 6.5, 6.0, 5.6, 2.6)) {
+    if (z > 3.5) {
+      if (ax >= 1.7 && ax <= 5.2 && y >= 17.0 && y <= 17.8 + 0.08 * (ax - 1.7)) return COL.hair;
+      // open eyes: white, dark iris with a little glint, lash line on top
+      const hx = x - Math.sign(x) * 3.0, ey = y - 14.55;
+      if (sq(hx / 0.95) + sq(ey / 0.62) <= 1) {
+        if (ey > 0.62 * Math.sqrt(Math.max(0, 1 - sq(hx / 0.95))) - 0.22) return COL.eye;
+        if (Math.hypot(hx + 0.18, ey - 0.16) <= 0.16) return COL.glint;
+        if (Math.hypot(hx, ey + 0.02) <= 0.5) return COL.iris;
+        return COL.sclera;
+      }
+      if (ax <= 1.9 && y >= 11.0 && y <= 11.6) return COL.lip;
+      if (ax <= 1.5 && y > 11.6 && y <= 12.0) return COL.lipTop;
+    }
+    return COL.skin;
+  }
+  for (const sx of [-1, 1]) if (ell(x, y, z, sx * 6.5, 14.2, 0.4, 0.8, 1.4, 1.0)) return COL.skin;
+  if (ax <= 1.6 && Math.abs(z - 0.3) <= 1.6 && y >= 9.3 && y <= 10.5) return COL.skin;
+
+  // dev mode: arms down, watch on the left wrist
+  if (v === 'dev') {
+    for (const sx of [-1, 1]) {
+      if (ell(x, y, z, sx * 5.2, 3.6, 0.3, 1.0, 1.0, 1.0)) return COL.skin;
+      if (seg(x, y, z, sx * 5.1, 7.6, 0, sx * 5.2, 4.2, 0.2, 0.95)) {
+        if (sx < 0 && y >= 4.5 && y <= 5.2 + s / 2) return COL.watch;
+        return COL.skin;
+      }
+    }
+  }
+
+  // tee, sleeves, legs, shoes
+  for (const sx of [-1, 1]) if (rbox(x, y, z, sx * 4.9, 8.6, 0, 1.0, 1.2, 1.3, 0.5)) return TEE[v];
+  if (rbox(x, y, z, 0, 6.9, 0, 4.3, 2.9, 2.5, 1.0)) return (y > 9.0 && ax <= 1.4 && z > 1.0) ? COL.skin : TEE[v];
+  for (const sx of [-1, 1]) {
+    if (rbox(x, y, z, sx * 1.8, 2.4, 0, 1.3, 1.6, 1.4, 0.4)) return COL.pants;
+    if (rbox(x, y, z, sx * 1.8, 0.55, 0.6, 1.4, 0.55, 2.0, 0.4)) return y < 0.3 ? COL.sole : COL.shoe;
+  }
+  return null;
+}
+
+// Sample the shapes on a grid of step s and keep only surface blocks.
+
+// ---------- era outfits on top of the approved model ----------
+const ERA = {
+  starry: { coat: '#3b2a20', waist: '#6b4a2b', shirt: '#efe6d0', tie: '#7a1f2b', frame: '#4a3424', hat: '#16141a', band: '#7a1f2b', boot: '#2a1d16' },
+  terminal: { jacket: '#0b140e', trim: '#39ff6a', stripe: '#c6ff3d', frame: '#39ff6a', streak: '#2bffc6', sole: '#39ff6a' }
+}
+const BRIM_Y = 22.9
+function colorAtEra(v, era, x, y, z, s) {
+  const ax = Math.abs(x), th = Math.max(0.5, s * 1.01)
+  const crown = sq(x / 4.7) + sq((z + 0.3) / 4.3) <= 1
+  if (era === 'starry') {
+    if (sq(x / 7.4) + sq((z + 0.3) / 6.8) <= 1 && y >= BRIM_Y && y <= BRIM_Y + th) return ERA.starry.hat
+    if (crown && y > BRIM_Y && y <= 29.4) return y <= BRIM_Y + 1.2 ? ERA.starry.band : ERA.starry.hat
+  }
+  const c = colorAt(v, x, y, z, s)
+  if (c === null) return null
+  const isHair = c === COL.hair || c === COL.hairHi || c === COL.hairLo
+  if (era === 'starry') {
+    if (isHair && y > BRIM_Y) return null
+    if (c === COL.headset || c === COL.cushion) return null
+    if (c === COL.frame) return ERA.starry.frame
+    if (c === COL.shoe || c === COL.sole) return ERA.starry.boot
+    if (c === TEE[v]) {
+      if (z > 1.2 && ax <= 1.3 && y >= 8.4 && y <= 9.4) return ERA.starry.tie
+      if (z > 1.2 && ax <= 1.1) return ERA.starry.shirt
+      if (z > 1.0 && ax <= 2.6 && y < 8.6) return ERA.starry.waist
+      return ERA.starry.coat
+    }
+  } else {
+    if (c === COL.frame) return ERA.terminal.frame
+    if (c === COL.sole) return ERA.terminal.sole
+    if (isHair && x > 1.2 && x < 3.4 && z > 2.6 && y > 18.2) return ERA.terminal.streak
+    if (c === TEE[v]) {
+      if (y > 9.3 || ax > 4.35) return ERA.terminal.trim
+      if (y > 6.9 && y < 7.5 && z > 0) return ERA.terminal.stripe
+      return ERA.terminal.jacket
+    }
+  }
+  return c
+}
+
+function voxelize(v, era, s) {
+  const X0 = -9.6, Y0 = -0.2, Z0 = -7.6, nx = Math.ceil(19.2 / s), ny = Math.ceil(30.4 / s), nz = Math.ceil(16.4 / s)
+  const colors = [], index = new Map(), grid = new Int16Array(nx * ny * nz).fill(-1)
+  const at = (i, j, k) => (i < 0 || j < 0 || k < 0 || i >= nx || j >= ny || k >= nz) ? -1 : grid[(i * ny + j) * nz + k]
+  for (let i = 0; i < nx; i++) for (let j = 0; j < ny; j++) for (let k = 0; k < nz; k++) {
+    const c = colorAtEra(v, era, X0 + (i + .5) * s, Y0 + (j + .5) * s, Z0 + (k + .5) * s, s)
+    if (c === null) continue
+    if (!index.has(c)) { index.set(c, colors.length); colors.push(c) }
+    grid[(i * ny + j) * nz + k] = index.get(c)
+  }
+  const out = colors.map(() => [])
+  for (let i = 0; i < nx; i++) for (let j = 0; j < ny; j++) for (let k = 0; k < nz; k++) {
+    const c = grid[(i * ny + j) * nz + k]; if (c < 0) continue
+    if (at(i+1,j,k) >= 0 && at(i-1,j,k) >= 0 && at(i,j+1,k) >= 0 && at(i,j-1,k) >= 0 && at(i,j,k+1) >= 0 && at(i,j,k-1) >= 0) continue
+    out[c].push(X0 + (i + .5) * s, Y0 + (j + .5) * s, Z0 + (k + .5) * s)
+  }
+  return colors.map((c, n) => [c, out[n]])
+}
+
+const canvas = document.getElementById('figure')
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true })
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2))
+const scene = new THREE.Scene()
+const cam = new THREE.OrthographicCamera(-17, 17, 17, -17, 0.1, 200)
+cam.position.set(14, 12, 34); cam.lookAt(0, 0, 0)
+const ambient = new THREE.AmbientLight(0xffffff, 1.1); scene.add(ambient)
+const key = new THREE.DirectionalLight(0xffffff, 1.6); key.position.set(8, 14, 12); scene.add(key)
+const rim = new THREE.DirectionalLight(0xffffff, 0); rim.position.set(-12, 6, -8); scene.add(rim)
+const pivot = new THREE.Group(); scene.add(pivot)
+const groups = {}
+const STEP = 0.25
+function build(era) {
+  const g = new THREE.Group(), geo = new THREE.BoxGeometry(STEP, STEP, STEP), m = new THREE.Matrix4()
+  for (const [c, pts] of voxelize('dev', era, STEP)) {
+    const n = pts.length / 3; if (!n) continue
+    const mesh = new THREE.InstancedMesh(geo, new THREE.MeshLambertMaterial({ color: c }), n)
+    for (let j = 0; j < n; j++) { m.makeTranslation(pts[j*3], pts[j*3+1], pts[j*3+2]); mesh.setMatrixAt(j, m) }
+    g.add(mesh)
+  }
+  g.position.sub(new THREE.Box3().setFromObject(g).getCenter(new THREE.Vector3()))
+  g.visible = false; pivot.add(g); groups[era] = g
+}
+function show(era) {
+  if (!groups[era]) build(era)
+  for (const k in groups) groups[k].visible = k === era
+  if (era === 'starry') { ambient.color.set('#9fb4ff'); ambient.intensity = 1.0; key.color.set('#ffe2a8'); key.intensity = 1.9; rim.intensity = 0 }
+  else { ambient.color.set('#ffffff'); ambient.intensity = 0.95; key.color.set('#e0ffe8'); key.intensity = 1.5; rim.color.set('#39ff6a'); rim.intensity = 1.3 }
+}
+function size() { const w = canvas.clientWidth, h = canvas.clientHeight; renderer.setSize(w, h, false) }
+size(); addEventListener('resize', size)
+show(document.documentElement.dataset.era)
+addEventListener('era', e => show(e.detail))
+setTimeout(() => { const other = document.documentElement.dataset.era === 'terminal' ? 'starry' : 'terminal'; if (!groups[other]) build(other) }, 600)
+
+let offset = 0, drag = null, last = -1e9, hop = -1e9
+canvas.addEventListener('pointerdown', e => { canvas.setPointerCapture(e.pointerId); drag = { x: e.clientX, m: 0 } })
+canvas.addEventListener('pointermove', e => { if (!drag) return; const dx = e.clientX - drag.x; drag = { x: e.clientX, m: drag.m + Math.abs(dx) }; offset += dx * .012; last = performance.now() })
+canvas.addEventListener('pointerup', () => { if (drag && drag.m < 4) hop = performance.now(); drag = null })
+canvas.style.touchAction = 'pan-y'; canvas.style.cursor = 'grab'
+function tick(t) {
+  const idle = t - last > 2500; if (idle) offset *= .97
+  pivot.rotation.y = offset + (idle ? Math.sin(t / 1600) * .6 : 0)
+  const h = (t - hop) / 450
+  pivot.position.y = (h >= 0 && h <= 1 ? Math.sin(h * Math.PI) * 2.5 : 0) + Math.sin(t / 500) * .15
+  renderer.render(scene, cam); requestAnimationFrame(tick)
+}
+requestAnimationFrame(tick)
+</script>
+</body>
+</html>

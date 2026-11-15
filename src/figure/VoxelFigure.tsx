@@ -1,36 +1,24 @@
 'use client'
 
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import {
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-  useSyncExternalStore
-} from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { BoxGeometry, type Group, type InstancedMesh, Matrix4 } from 'three'
 
-import { useIsDark } from '@/lib/useIsDark'
+import type { Era } from '@/lib/era'
+import { useEra } from '@/lib/useEra'
+import { useReducedMotion } from '@/lib/useReducedMotion'
 
+import { figureUrl, lightsFor, pickShown } from './figureEra'
 import type { Variant } from './model'
 import { easeOffset, frameloopFor, pose } from './pose'
 import type { FigureData } from './voxelize'
 import { hasWebGL } from './webgl'
 
-// Model units visible across the canvas; the figure is about 25 units tall.
-const VIEW_UNITS = 31
+// Model units visible across the canvas; the figure is about 29 units tall with the 1889 hat.
+const VIEW_UNITS = 34
 const PHASE: Record<Variant, number> = { dev: 0, creator: 1.7, player: 3.4 }
 const DRAG_SPEED = 0.012 // radians per pixel
 const CLICK_SLOP = 4 // px of movement that still counts as a click
-
-function subscribeReducedMotion(onChange: () => void) {
-  const query = window.matchMedia('(prefers-reduced-motion: reduce)')
-  query.addEventListener('change', onChange)
-  return () => query.removeEventListener('change', onChange)
-}
-const prefersReducedMotion = () =>
-  window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
 function ColorGroup({
   data,
@@ -88,15 +76,17 @@ function centerOffset(data: FigureData): [number, number, number] {
 function Scene({
   data,
   variant,
+  era,
   reducedMotion
 }: {
   data: FigureData
   variant: Variant
+  era: Era
   reducedMotion: boolean
 }) {
   const pivot = useRef<Group>(null)
   const motion = useRef({ offset: 0, lastInput: -1e9, hopAt: -1e9 })
-  const dark = useIsDark()
+  const lights = lightsFor(era)
   const canvas = useThree(state => state.gl.domElement)
   // With reduced motion the canvas only draws on request (see frameloopFor).
   const invalidate = useThree(state => state.invalidate)
@@ -156,8 +146,17 @@ function Scene({
 
   return (
     <>
-      <ambientLight intensity={dark ? 1.35 : 1.15} />
-      <directionalLight position={[8, 14, 12]} intensity={dark ? 2.0 : 1.7} />
+      <ambientLight color={lights.ambient[0]} intensity={lights.ambient[1]} />
+      <directionalLight
+        position={[8, 14, 12]}
+        color={lights.key[0]}
+        intensity={lights.key[1]}
+      />
+      <directionalLight
+        position={[-12, 6, -8]}
+        color={lights.rim[0]}
+        intensity={lights.rim[1]}
+      />
       <group ref={pivot}>
         <group position={center}>
           {data.groups.map(group => (
@@ -177,31 +176,43 @@ function Scene({
 type Props = { variant: Variant; inView: boolean }
 
 export default function VoxelFigure({ variant, inView }: Props) {
-  const [data, setData] = useState<FigureData | null>(null)
-  const reducedMotion = useSyncExternalStore(
-    subscribeReducedMotion,
-    prefersReducedMotion,
-    () => false
-  )
+  const era = useEra()
+  const reducedMotion = useReducedMotion()
+  const [loaded, setLoaded] = useState<Partial<Record<Era, FigureData>>>({})
 
+  // Load this era's figure now and the other era's once the browser is idle,
+  // so switching eras swaps outfits without waiting.
   useEffect(() => {
     // No WebGL: skip the download too; the placeholder stays.
     if (!hasWebGL()) return
     let cancelled = false
-    fetch(`/figures/${variant}.json`)
-      .then(res => res.json() as Promise<FigureData>)
-      .then(figure => {
-        if (!cancelled) setData(figure)
-      })
-      .catch(() => {
-        // Without the data the placeholder simply stays.
-      })
+    const load = (which: Era) =>
+      fetch(figureUrl(variant, which))
+        .then(res => res.json() as Promise<FigureData>)
+        .then(figure => {
+          if (!cancelled)
+            setLoaded(prev =>
+              prev[which] ? prev : { ...prev, [which]: figure }
+            )
+        })
+        .catch(() => {
+          // Without the data the placeholder (or the other outfit) simply stays.
+        })
+    load(era)
+    const other: Era = era === 'starry' ? 'terminal' : 'starry'
+    const idle = 'requestIdleCallback' in window
+    const handle = idle
+      ? window.requestIdleCallback(() => load(other), { timeout: 3000 })
+      : window.setTimeout(() => load(other), 1500)
     return () => {
       cancelled = true
+      if (idle) window.cancelIdleCallback(handle)
+      else window.clearTimeout(handle)
     }
-  }, [variant])
+  }, [variant, era])
 
-  if (!data) return null
+  const shown = pickShown(loaded, era)
+  if (!shown) return null
 
   return (
     <Canvas
@@ -214,7 +225,12 @@ export default function VoxelFigure({ variant, inView }: Props) {
       // pan-y: vertical swipes still scroll the page on phones.
       style={{ touchAction: 'pan-y', cursor: 'grab' }}
     >
-      <Scene data={data} variant={variant} reducedMotion={reducedMotion} />
+      <Scene
+        data={loaded[shown]!}
+        variant={variant}
+        era={shown}
+        reducedMotion={reducedMotion}
+      />
     </Canvas>
   )
 }

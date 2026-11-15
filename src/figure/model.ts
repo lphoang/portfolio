@@ -2,6 +2,7 @@
 // docs/superpowers/specs/2026-11-15-portfolio-refresh/figure-reference.html.
 // Units: one unit is one cube at 1x detail; y points up, the face looks toward +z.
 // colorAt says which color the figure has at a point, or null for empty space.
+import type { Era } from '@/lib/era'
 
 export type Variant = 'dev' | 'player' | 'creator'
 
@@ -309,3 +310,77 @@ export function colorAt(
 }
 
 // Sample the shapes on a grid of step s and keep only surface blocks.
+
+// ---------- era outfits ----------
+
+const ERA = {
+  starry: {
+    coat: '#3b2a20',
+    waist: '#6b4a2b',
+    shirt: '#efe6d0',
+    tie: '#7a1f2b',
+    frame: '#4a3424',
+    hat: '#16141a',
+    band: '#7a1f2b',
+    boot: '#2a1d16'
+  },
+  terminal: {
+    jacket: '#0b140e',
+    trim: '#39ff6a',
+    stripe: '#c6ff3d',
+    frame: '#39ff6a',
+    streak: '#2bffc6',
+    sole: '#39ff6a'
+  }
+}
+const BRIM_Y = 22.9
+/** The figure dressed for an era: a top hat and period clothes in 1889, green
+ * trim and glasses on the terminal. Ported unchanged from the eras mockup. */
+export function colorAtEra(
+  v: Variant,
+  era: Era,
+  x: number,
+  y: number,
+  z: number,
+  s: number
+): string | null {
+  const ax = Math.abs(x),
+    th = Math.max(0.5, s * 1.01)
+  const crown = sq(x / 4.7) + sq((z + 0.3) / 4.3) <= 1
+  if (era === 'starry') {
+    if (
+      sq(x / 7.4) + sq((z + 0.3) / 6.8) <= 1 &&
+      y >= BRIM_Y &&
+      y <= BRIM_Y + th
+    )
+      return ERA.starry.hat
+    if (crown && y > BRIM_Y && y <= 29.4)
+      return y <= BRIM_Y + 1.2 ? ERA.starry.band : ERA.starry.hat
+  }
+  const c = colorAt(v, x, y, z, s)
+  if (c === null) return null
+  const isHair = c === COL.hair || c === COL.hairHi || c === COL.hairLo
+  if (era === 'starry') {
+    if (isHair && y > BRIM_Y) return null
+    if (c === COL.headset || c === COL.cushion) return null
+    if (c === COL.frame) return ERA.starry.frame
+    if (c === COL.shoe || c === COL.sole) return ERA.starry.boot
+    if (c === TEE[v]) {
+      if (z > 1.2 && ax <= 1.3 && y >= 8.4 && y <= 9.4) return ERA.starry.tie
+      if (z > 1.2 && ax <= 1.1) return ERA.starry.shirt
+      if (z > 1.0 && ax <= 2.6 && y < 8.6) return ERA.starry.waist
+      return ERA.starry.coat
+    }
+  } else {
+    if (c === COL.frame) return ERA.terminal.frame
+    if (c === COL.sole) return ERA.terminal.sole
+    if (isHair && x > 1.2 && x < 3.4 && z > 2.6 && y > 18.2)
+      return ERA.terminal.streak
+    if (c === TEE[v]) {
+      if (y > 9.3 || ax > 4.35) return ERA.terminal.trim
+      if (y > 6.9 && y < 7.5 && z > 0) return ERA.terminal.stripe
+      return ERA.terminal.jacket
+    }
+  }
+  return c
+}
