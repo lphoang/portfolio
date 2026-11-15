@@ -1,0 +1,175 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen&family=Doto:wght@900&family=Space+Grotesk:wght@500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+  .th { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem; }
+  .th .card-image { aspect-ratio: auto; display: block; padding: 0; }
+  .s44 { height: 640px; padding: 18px; display: flex; flex-direction: column; gap: 14px; overflow: hidden;
+         background-color: var(--bg); color: var(--ink); font-family: 'Inter', sans-serif;
+         background-image: radial-gradient(var(--dot) 1px, transparent 1px); background-size: 8px 8px; }
+  .s44 .nav { display: flex; gap: 12px; align-items: center; }
+  .s44 .nav b { margin-right: auto; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 16px; color: var(--accent); }
+  .s44 .nav span { font-family: 'Silkscreen', monospace; font-size: 10px; }
+  .s44 .nav .tg { width: 22px; height: 22px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 5px; font-size: 11px; }
+  .s44 .hero { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; }
+  .s44 canvas { width: 160px; height: 160px; image-rendering: pixelated; }
+  .s44 .name { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 28px; line-height: 1.05; }
+  .s44 .tag { font-size: 12px; color: var(--muted); }
+  .s44 .h { font-family: 'Silkscreen', monospace; font-size: 11px; color: var(--accent); margin-bottom: -6px; }
+  .s44 .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .s44 .stats div, .s44 .app, .s44 .jobs { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; }
+  .s44 .stats div { padding: 7px 4px; text-align: center; }
+  .s44 .stats b { display: block; font-family: 'Doto', monospace; font-weight: 900; font-size: 21px; line-height: 1; color: var(--num); }
+  .s44 .stats small { font-family: 'Silkscreen', monospace; font-size: 9px; color: var(--muted); }
+  .s44 .jobs { padding: 4px 10px; font-size: 11.5px; }
+  .s44 .jobs div { display: grid; grid-template-columns: 74px 1fr; gap: 8px; padding: 5px 0; border-bottom: 1px dashed var(--line); }
+  .s44 .jobs div:last-child { border-bottom: 0; }
+  .s44 .jobs time { font-family: 'Silkscreen', monospace; font-size: 9px; color: var(--muted); padding-top: 2px; }
+  .s44 .jobs strong { font-weight: 600; }
+  .s44 .jobs em { font-style: normal; color: var(--muted); }
+  .s44 .app { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; }
+  .s44 .app span { font-family: 'Space Grotesk', sans-serif; font-weight: 700; }
+  .s44 .app em { font-style: normal; font-family: 'Silkscreen', monospace; font-size: 10px; padding: 2px 8px; border-radius: 4px; background: var(--badge); color: var(--badge-ink); }
+
+  .mint   { --bg: #e9f1df; --dot: #1b2e2218; --panel: #f6faef; --line: #b9cba6; --ink: #1b2e22; --muted: #5b6f58; --accent: #2f6b2b; --num: #2f6b2b; --badge: #2f6b2b; --badge-ink: #e9f1df; }
+  .sunset { --bg: #1a1024; --dot: #ffffff10; --panel: #241634; --line: #3d2850; --ink: #f6e9ff; --muted: #b9a3cc; --accent: #ff7a59; --num: #ffcf5c; --badge: #ff7a59; --badge-ink: #1a1024; }
+  .mono   { --bg: #f5f3ee; --dot: #11111116; --panel: #ffffff; --line: #1a1a1a; --ink: #111111; --muted: #66625a; --accent: #2d5bff; --num: #2d5bff; --badge: #2d5bff; --badge-ink: #ffffff; }
+
+  .fontline { font-size: 12px; margin-top: 6px; opacity: .8; }
+  .swatches { display: flex; gap: 6px; margin-top: 8px; align-items: center; font-size: 11px; }
+  .swatches i { width: 20px; height: 20px; border-radius: 5px; border: 1px solid rgba(127,127,127,.35); }
+</style>
+
+<h2>Which theme for the 44-bit style?</h2>
+<p class="subtitle">Same 44-bit layout (clean, pixel only as a hint), three color themes. Now with your real work history from the LinkedIn PDF. Each theme gets a matching light/dark pair for the toggle; the swatches show both. Stats are still sample numbers.</p>
+
+<div class="th cards">
+  <div class="card" data-choice="gameboy-mint" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="s44 mint">
+        <div class="nav"><b>leph</b><span>Channels</span><span>Apps</span><i class="tg">☾</i></div>
+        <div class="hero">
+          <canvas data-stops="#0f380f,#306230,#8bac0f,#d4ec8a" data-bg="#e9f1df"></canvas>
+          <div class="name">Le Phuoc Hoang</div>
+          <div class="tag">Software engineer in Da Nang. Developer, dreamer.</div>
+        </div>
+        <div class="h">// channels</div>
+        <div class="stats"><div><b>12.4K</b><small>subs</small></div><div><b>1.2M</b><small>views</small></div><div><b>148</b><small>videos</small></div></div>
+        <div class="h">// work</div>
+        <div class="jobs">
+          <div><time>2025 - now</time><span><strong>Software Engineer</strong> <em>· mgm technology partners</em></span></div>
+          <div><time>2023 - 2025</time><span><strong>Software Engineer</strong> <em>· mesoneer</em></span></div>
+          <div><time>2021 - 2023</time><span><strong>Back End &amp; Frontend Dev</strong> <em>· FPT Software</em></span></div>
+        </div>
+        <div class="app"><span>2eat</span><em>coming soon</em></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A · Game Boy Mint</h3>
+      <p>Light and fresh. Soft mint background with deep greens, a nod to the classic handheld screen without looking old.</p>
+      <div class="swatches">light <i style="background:#e9f1df"></i><i style="background:#2f6b2b"></i><i style="background:#8bac0f"></i> &nbsp;dark <i style="background:#0f1f14"></i><i style="background:#9bd96b"></i><i style="background:#d4ec8a"></i></div>
+    </div>
+  </div>
+
+  <div class="card" data-choice="sunset-arcade" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="s44 sunset">
+        <div class="nav"><b>leph</b><span>Channels</span><span>Apps</span><i class="tg">☀</i></div>
+        <div class="hero">
+          <canvas data-stops="#2a1440,#7b2cbf,#ff5d8f,#ffcf5c" data-bg="#1a1024"></canvas>
+          <div class="name">Le Phuoc Hoang</div>
+          <div class="tag">Software engineer in Da Nang. Developer, dreamer.</div>
+        </div>
+        <div class="h">// channels</div>
+        <div class="stats"><div><b>12.4K</b><small>subs</small></div><div><b>1.2M</b><small>views</small></div><div><b>148</b><small>videos</small></div></div>
+        <div class="h">// work</div>
+        <div class="jobs">
+          <div><time>2025 - now</time><span><strong>Software Engineer</strong> <em>· mgm technology partners</em></span></div>
+          <div><time>2023 - 2025</time><span><strong>Software Engineer</strong> <em>· mesoneer</em></span></div>
+          <div><time>2021 - 2023</time><span><strong>Back End &amp; Frontend Dev</strong> <em>· FPT Software</em></span></div>
+        </div>
+        <div class="app"><span>2eat</span><em>coming soon</em></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B · Sunset Arcade</h3>
+      <p>Dark and warm. Deep plum with coral and gold, like an arcade at dusk. Feels the most "creator" of the three.</p>
+      <div class="swatches">dark <i style="background:#1a1024"></i><i style="background:#ff7a59"></i><i style="background:#ffcf5c"></i> &nbsp;light <i style="background:#fff4ec"></i><i style="background:#d9512f"></i><i style="background:#7b2cbf"></i></div>
+    </div>
+  </div>
+
+  <div class="card" data-choice="mono-paper" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="s44 mono">
+        <div class="nav"><b>leph</b><span>Channels</span><span>Apps</span><i class="tg">☾</i></div>
+        <div class="hero">
+          <canvas data-stops="#0b1a5c,#2d5bff,#8fb0ff,#ffffff" data-bg="#f5f3ee"></canvas>
+          <div class="name">Le Phuoc Hoang</div>
+          <div class="tag">Software engineer in Da Nang. Developer, dreamer.</div>
+        </div>
+        <div class="h">// channels</div>
+        <div class="stats"><div><b>12.4K</b><small>subs</small></div><div><b>1.2M</b><small>views</small></div><div><b>148</b><small>videos</small></div></div>
+        <div class="h">// work</div>
+        <div class="jobs">
+          <div><time>2025 - now</time><span><strong>Software Engineer</strong> <em>· mgm technology partners</em></span></div>
+          <div><time>2023 - 2025</time><span><strong>Software Engineer</strong> <em>· mesoneer</em></span></div>
+          <div><time>2021 - 2023</time><span><strong>Back End &amp; Frontend Dev</strong> <em>· FPT Software</em></span></div>
+        </div>
+        <div class="app"><span>2eat</span><em>coming soon</em></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C · Mono Paper</h3>
+      <p>Black and white with one electric-blue accent, like an old desktop computer. The calmest, most "engineer" option.</p>
+      <div class="swatches">light <i style="background:#f5f3ee"></i><i style="background:#111111"></i><i style="background:#2d5bff"></i> &nbsp;dark <i style="background:#0e0e10"></i><i style="background:#f5f3ee"></i><i style="background:#6f8dff"></i></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const hex = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+  const V = [[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],[-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]];
+  const F = [[0,1,2,3],[5,4,7,6],[4,0,3,7],[1,5,6,2],[3,2,6,7],[4,5,1,0]];
+  const L = (() => { const v = [-0.5, -0.8, -0.6], m = Math.hypot(...v); return v.map(x => x / m); })();
+  const RES = 120;
+  const items = [...document.querySelectorAll('canvas[data-stops]')].map(c => {
+    c.width = RES; c.height = RES;
+    const stops = c.dataset.stops.split(',').map(hex);
+    const ramp = s => {
+      const t = Math.max(0, Math.min(1, s)) * (stops.length - 1), seg = Math.min(stops.length - 2, Math.floor(t)), k = t - seg;
+      return stops[seg].map((v, j) => Math.round(v + (stops[seg + 1][j] - v) * k));
+    };
+    return { ctx: c.getContext('2d'), ramp, bg: c.dataset.bg };
+  });
+  function draw(t) {
+    for (const { ctx, ramp, bg } of items) {
+      ctx.fillStyle = bg; ctx.fillRect(0, 0, RES, RES);
+      const ay = t / 1400, ax = 0.55 + Math.sin(t / 2100) * 0.25;
+      const P = V.map(([x, y, z]) => {
+        const x1 = x * Math.cos(ay) - z * Math.sin(ay), z1 = x * Math.sin(ay) + z * Math.cos(ay);
+        return [x1, y * Math.cos(ax) - z1 * Math.sin(ax), y * Math.sin(ax) + z1 * Math.cos(ax)];
+      });
+      const faces = F.map(f => {
+        const [a, b, c] = f.map(i => P[i]);
+        const u = b.map((v, i) => v - a[i]), w = c.map((v, i) => v - a[i]);
+        let n = [u[1] * w[2] - u[2] * w[1], u[2] * w[0] - u[0] * w[2], u[0] * w[1] - u[1] * w[0]];
+        const m = Math.hypot(...n); n = n.map(v => v / m);
+        return { f, n, z: f.reduce((s, i) => s + P[i][2], 0) / 4 };
+      }).filter(o => o.n[2] < 0).sort((a, b) => b.z - a.z);
+      const s = RES * 0.26, cx = RES / 2, cy = RES / 2;
+      for (const { f, n } of faces) {
+        const lit = 0.25 + 0.75 * Math.max(0, -(n[0] * L[0] + n[1] * L[1] + n[2] * L[2]));
+        const g = ctx.createLinearGradient(0, 0, RES, RES);
+        g.addColorStop(0, 'rgb(' + ramp(lit + 0.08) + ')'); g.addColorStop(1, 'rgb(' + ramp(lit - 0.12) + ')');
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        f.forEach((i, k) => { const [x, y, z] = P[i], d = 4 / (4 + z); k ? ctx.lineTo(cx + x * s * d, cy + y * s * d) : ctx.moveTo(cx + x * s * d, cy + y * s * d); });
+        ctx.closePath(); ctx.fill();
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+})();
+</script>

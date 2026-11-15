@@ -35,3 +35,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# brainstorm mockups
+.superpowers/
+
+# LinkedIn export with private contact details
+Profile.pdf
