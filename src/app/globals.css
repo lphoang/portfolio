@@ -14,6 +14,7 @@
   --badge: #2f6b2b;
   --badge-ink: #e9f1df;
   --dot: #1b2e2218;
+  --bar: #2f6b2b;
   color-scheme: light;
 }
 
@@ -28,6 +29,8 @@
   --badge: #9bd96b;
   --badge-ink: #0f1f14;
   --dot: #e2f0d410;
+  /* Chart bars: a step deeper than the accent to stay in the chart lightness band. */
+  --bar: #5fa83c;
   color-scheme: dark;
 }
 
@@ -41,6 +44,7 @@
   --color-num: var(--num);
   --color-badge: var(--badge);
   --color-badge-ink: var(--badge-ink);
+  --color-bar: var(--bar);
 
   --font-display: var(--font-space-grotesk), ui-sans-serif, sans-serif;
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;

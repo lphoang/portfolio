@@ -1,11 +1,23 @@
 import { AppCard } from '@/components/AppCard'
+import { ChannelTeaser } from '@/components/ChannelTeaser'
 import { SectionLabel } from '@/components/SectionLabel'
 import { Timeline } from '@/components/Timeline'
 import { apps } from '@/data/apps'
+import { channels } from '@/data/channels'
 import { profile } from '@/data/profile'
 import { education, work } from '@/data/work'
+import { getChannelStats } from '@/lib/youtube'
 
-export default function Home() {
+// The channel teasers use YouTube numbers; refresh at most every 6 hours.
+export const revalidate = 21600
+
+const links = [
+  ...profile.links,
+  ...channels.map(channel => ({ label: 'YouTube', text: channel.handle, url: channel.url }))
+]
+
+export default async function Home() {
+  const stats = await Promise.all(channels.map(channel => getChannelStats(channel)))
   return (
     <div className="space-y-10">
       <section className="flex flex-col items-center text-center">
@@ -32,6 +44,15 @@ export default function Home() {
       </section>
 
       <section>
+        <SectionLabel>on youtube</SectionLabel>
+        <div className="space-y-2">
+          {channels.map((channel, i) => (
+            <ChannelTeaser key={channel.id} channel={channel} stats={stats[i]} />
+          ))}
+        </div>
+      </section>
+
+      <section>
         <SectionLabel>building</SectionLabel>
         <AppCard app={apps[0]} href="/apps" />
       </section>
@@ -50,7 +71,7 @@ export default function Home() {
       <section>
         <SectionLabel>connect</SectionLabel>
         <ul className="space-y-1">
-          {profile.links.map(link => (
+          {links.map(link => (
             <li key={link.url}>
               <a href={link.url} target="_blank" rel="noreferrer" className="hover:text-accent">
                 <span className="font-label text-[10px] text-muted">{link.label}</span>{' '}
