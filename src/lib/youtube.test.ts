@@ -37,10 +37,26 @@ const playlistResponse = {
   ]
 }
 
-const video = (id: string, statistics: Record<string, string>) => ({
+const PORTRAIT = { embedWidth: 203, embedHeight: 360 }
+const LANDSCAPE = { embedWidth: 480, embedHeight: 270 }
+
+const video = (
+  id: string,
+  statistics: Record<string, string>,
+  thumbnails: Record<string, { url: string }> = {
+    high: { url: `https://i.ytimg.com/vi/${id}/hqdefault.jpg` },
+    medium: { url: `https://i.ytimg.com/vi/${id}/mqdefault.jpg` }
+  },
+  player: { embedWidth?: number; embedHeight?: number } = PORTRAIT
+) => ({
   id,
-  snippet: { title: `Video ${id}`, publishedAt: '2026-11-03T10:00:00Z' },
-  statistics
+  snippet: {
+    title: `Video ${id}`,
+    publishedAt: '2026-11-03T10:00:00Z',
+    thumbnails
+  },
+  statistics,
+  player
 })
 
 // YouTube may return videos in any order; the playlist order is the one to keep.
@@ -103,8 +119,63 @@ test('returns totals and the latest uploads in playlist order', async () => {
     publishedAt: '2026-11-03T10:00:00Z',
     views: 300,
     likes: 20,
-    comments: 4
+    comments: 4,
+    coverUrl: 'https://i.ytimg.com/vi/b/hqdefault.jpg',
+    portrait: true
   })
+})
+
+test('landscape videos use the 16:9 thumbnail; unknown shapes count as landscape', async () => {
+  const videos = {
+    items: [
+      video('b', { viewCount: '300' }, undefined, LANDSCAPE),
+      video('a', { viewCount: '100' }, undefined, {})
+    ]
+  }
+  const stats = await getChannelStats(
+    channel,
+    'key',
+    fakeFetch({ ...ok, videos }).impl
+  )
+  expect(stats!.latest[0]).toMatchObject({
+    portrait: false,
+    coverUrl: 'https://i.ytimg.com/vi/b/mqdefault.jpg'
+  })
+  expect(stats!.latest[1].portrait).toBe(false)
+})
+
+test('the videos request asks YouTube for the player shape', async () => {
+  const urls: string[] = []
+  const base = fakeFetch(ok).impl
+  const spy = (async (input: RequestInfo | URL, init?: RequestInit) => {
+    urls.push(String(input))
+    return base(input, init)
+  }) as typeof fetch
+  await getChannelStats(channel, 'key', spy)
+  const videosUrl = new URL(urls.find(u => u.includes('/videos?'))!)
+  expect(videosUrl.searchParams.get('part')).toBe('snippet,statistics,player')
+  expect(videosUrl.searchParams.get('maxHeight')).toBe('360')
+})
+
+test('a video without thumbnails has no cover', async () => {
+  const videos = {
+    items: [
+      video('b', { viewCount: '300' }, {}),
+      video(
+        'a',
+        { viewCount: '100' },
+        { default: { url: 'https://i.ytimg.com/vi/a/default.jpg' } }
+      )
+    ]
+  }
+  const stats = await getChannelStats(
+    channel,
+    'key',
+    fakeFetch({ ...ok, videos }).impl
+  )
+  expect(stats!.latest[0].coverUrl).toBeNull()
+  // The small default thumbnail is too blurry for a cover, but better than nothing.
+  expect(stats!.latest[1].coverUrl).toBe('https://i.ytimg.com/vi/a/default.jpg')
 })
 
 test('hidden subscriber count becomes null', async () => {

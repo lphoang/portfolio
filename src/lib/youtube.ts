@@ -10,6 +10,8 @@ export type VideoStats = {
   views: number
   likes: number | null
   comments: number | null
+  coverUrl: string | null
+  portrait: boolean
 }
 
 export type ChannelStats = {
@@ -39,11 +41,20 @@ type ChannelsResponse = {
     contentDetails: { relatedPlaylists: { uploads: string } }
   }[]
 }
+type Thumbnails = Partial<
+  Record<'default' | 'medium' | 'high', { url: string }>
+>
 type PlaylistResponse = { items?: { contentDetails: { videoId: string } }[] }
 type VideosResponse = {
   items?: {
     id: string
-    snippet: { title: string; publishedAt: string }
+    snippet: {
+      title: string
+      publishedAt: string
+      thumbnails?: Thumbnails
+    }
+    // Only present when the request sets maxHeight; gives the video's shape.
+    player?: { embedWidth?: number | string; embedHeight?: number | string }
     statistics: {
       viewCount?: string
       likeCount?: string
@@ -53,6 +64,22 @@ type VideosResponse = {
 }
 
 class YouTubeError extends Error {}
+
+// Shorts are taller than wide; anything unknown is treated as landscape so nothing gets cut.
+const isPortrait = (player?: {
+  embedWidth?: number | string
+  embedHeight?: number | string
+}) => Number(player?.embedHeight) > Number(player?.embedWidth)
+
+// The cover to show. For Shorts the "high" thumbnail (480×360) holds the portrait
+// cover in its middle, which the page crops to 9:16; landscape videos use the 16:9
+// "medium" one, which has no black bars.
+const coverOf = (thumbnails: Thumbnails | undefined, portrait: boolean) => {
+  const order = portrait
+    ? [thumbnails?.high, thumbnails?.medium, thumbnails?.default]
+    : [thumbnails?.medium, thumbnails?.high, thumbnails?.default]
+  return order.find(t => t?.url)?.url ?? null
+}
 
 const toNumber = (value?: string) =>
   value === undefined ? null : Number(value)
@@ -108,7 +135,8 @@ export async function getChannelStats(
     let latest: VideoStats[] = []
     if (ids.length > 0) {
       const videos = await get<VideosResponse>('videos', {
-        part: 'snippet,statistics',
+        part: 'snippet,statistics,player',
+        maxHeight: '360',
         id: ids.join(',')
       })
       const byId = new Map((videos.items ?? []).map(v => [v.id, v]))
@@ -123,7 +151,9 @@ export async function getChannelStats(
             publishedAt: v.snippet.publishedAt,
             views: Number(v.statistics.viewCount ?? 0),
             likes: toNumber(v.statistics.likeCount),
-            comments: toNumber(v.statistics.commentCount)
+            comments: toNumber(v.statistics.commentCount),
+            coverUrl: coverOf(v.snippet.thumbnails, isPortrait(v.player)),
+            portrait: isPortrait(v.player)
           }
         ]
       })

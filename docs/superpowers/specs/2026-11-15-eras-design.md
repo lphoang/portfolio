@@ -210,7 +210,7 @@ The props per page stay the same in both eras: headset on Home (terminal only), 
 ### Bio
 
 - Tagline stays: "Developer, dreamer, everything all at once."
-- Intro becomes: "Software engineer at mgm technology partners in Da Nang, Vietnam, with five years across back-end and front-end work. After hours I write short videos as code for two YouTube channels, one with "what if" comic stories and one with bite-size coding questions, and I'm building 2Eat, a meal planner app made with React and Rust."
+- The intro paragraph is removed (the owner's call after seeing it live); the tagline carries the hero.
 - Hobbies are unchanged.
 
 ### Testing

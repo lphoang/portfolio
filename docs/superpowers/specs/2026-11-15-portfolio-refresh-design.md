@@ -84,7 +84,7 @@ Top to bottom:
   - channel name, avatar, its one line, and a link to the channel,
   - three big numbers: **subscribers**, **total views**, **videos**,
   - a **bar chart of views** for the latest ~10 uploads,
-  - a list of those uploads: title (links to YouTube), publish date, views, likes, comments.
+  - a grid of those uploads as covers (added later at the owner's request): Shorts in a 9:16 tile cropped from the 480×360 thumbnail; landscape videos shown whole on their 16:9 thumbnail over a blurred copy. The shape comes from `videos.list` `part=player` with `maxHeight`. Each cover shows views, then title, date, likes and comments.
 - Data comes from the **YouTube Data API v3** with one API key. For each channel:
   `channels.list` (find the channel by handle, get its statistics and uploads playlist), then `playlistItems.list` (latest 10 uploads), then `videos.list` (their statistics). About 3 quota units per channel per refresh, far below the free 10,000 per day.
 - Data is fetched **on the server** and cached for **6 hours** (Next.js revalidate). The key is a server-only environment variable, `YOUTUBE_API_KEY`.
