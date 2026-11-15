@@ -1,0 +1,80 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Game Boy Mint. Light values on :root, dark values when <html> has .dark. */
+:root {
+  --bg: #e9f1df;
+  --panel: #f6faef;
+  --line: #b9cba6;
+  --ink: #1b2e22;
+  --muted: #5b6f58;
+  --accent: #2f6b2b;
+  --num: #2f6b2b;
+  --badge: #2f6b2b;
+  --badge-ink: #e9f1df;
+  --dot: #1b2e2218;
+  --bar: #2f6b2b;
+  color-scheme: light;
+}
+
+.dark {
+  --bg: #0f1f14;
+  --panel: #16291c;
+  --line: #2c4a33;
+  --ink: #e2f0d4;
+  --muted: #9fb79a;
+  --accent: #9bd96b;
+  --num: #d4ec8a;
+  --badge: #9bd96b;
+  --badge-ink: #0f1f14;
+  --dot: #e2f0d410;
+  /* Chart bars: a step deeper than the accent to stay in the chart lightness band. */
+  --bar: #5fa83c;
+  /* Glow behind the 3D figure so its dark hair and clothes stay visible. */
+  --spot: #e2f0d438;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-num: var(--num);
+  --color-badge: var(--badge);
+  --color-badge-ink: var(--badge-ink);
+  --color-bar: var(--bar);
+
+  --font-display: var(--font-space-grotesk), ui-sans-serif, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-label: var(--font-silkscreen), ui-monospace, monospace;
+  --font-num: var(--font-doto), ui-monospace, monospace;
+}
+
+/* Every box on the site: 1px border, 6px corners. */
+@utility card {
+  background-color: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+/* Reserve the scrollbar's space so the navbar doesn't shift between short and long pages. */
+html {
+  scrollbar-gutter: stable;
+}
+
+body {
+  background-color: var(--bg);
+  background-image: radial-gradient(var(--dot) 1px, transparent 1px);
+  background-size: 8px 8px;
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}

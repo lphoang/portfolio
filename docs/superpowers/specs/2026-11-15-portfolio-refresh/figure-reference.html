@@ -1,0 +1,274 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
+
+<style>
+  .levels { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 1rem; }
+  .levels button { font: inherit; font-size: 13px; padding: 7px 12px; border-radius: 8px; cursor: pointer;
+        border: 1px solid var(--border, #555); background: var(--bg-secondary, #2d2d2f); color: inherit; }
+  .levels button.on { background: #2f6b2b; border-color: #2f6b2b; color: #e9f1df; }
+  .fd { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem; }
+  .fd .card-image { aspect-ratio: auto; display: grid; place-items: center; padding: 14px 0;
+        background-color: #e9f1df; background-image: radial-gradient(#1b2e2218 1px, transparent 1px); background-size: 8px 8px; }
+  .fd canvas { width: 300px; height: 300px; image-rendering: pixelated; cursor: grab; touch-action: none; }
+  .fd canvas:active { cursor: grabbing; }
+  .fd .cap { font-family: 'Silkscreen', monospace; font-size: 10px; color: #5b6f58; }
+  #busy { font-size: 12px; opacity: .7; margin-left: 6px; align-self: center; }
+</style>
+
+<h2>Voxel you: how much detail?</h2>
+<p class="subtitle">You're right, the last one was coarse. "44-bit" only sets how pixelated the final image is. The real limit was the model: the head was just 9 blocks wide. Now the figure is built from smooth shapes and then turned into blocks, so detail is a real setting. <b>Switch the levels below</b> (they apply to all three), drag to spin, click to hop.</p>
+
+<div class="levels">
+  <button data-choice="detail-1x" data-level="1">1× chunky (what you saw)</button>
+  <button data-choice="detail-2x" data-level="2">2× detail</button>
+  <button data-choice="detail-3x" data-level="3">3× detail</button>
+  <button data-choice="detail-4x" data-level="4" class="on">4× detail (your pick)</button>
+  <span id="busy"></span>
+</div>
+
+<div class="fd cards">
+  <div class="card" data-choice="dev-mode" onclick="toggleSelect(this)">
+    <div class="card-image"><canvas data-variant="dev"></canvas><div class="cap">// dev mode</div></div>
+    <div class="card-body"><h3>A · Dev mode</h3><p>Black tee, headset with mic, watch.</p></div>
+  </div>
+  <div class="card" data-choice="player-mode" onclick="toggleSelect(this)">
+    <div class="card-image"><canvas data-variant="player"></canvas><div class="cap">// player mode</div></div>
+    <div class="card-body"><h3>B · Player mode</h3><p>White tee, showing off a little handheld.</p></div>
+  </div>
+  <div class="card" data-choice="creator-mode" onclick="toggleSelect(this)">
+    <div class="card-image"><canvas data-variant="creator"></canvas><div class="cap">// creator mode</div></div>
+    <div class="card-body"><h3>C · Creator mode</h3><p>Navy tee, filming with a phone (record light on).</p></div>
+  </div>
+</div>
+
+<script type="module">
+import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
+
+const COL = {
+  skin: '#e9b98f', nose: '#dfa983', lip: '#c4746a', lipTop: '#d48a7c', eye: '#141010', sclera: '#f7f3ee', iris: '#2a1c16', glint: '#ffffff',
+  hair: '#1d1714', hairHi: '#3a2a20', hairLo: '#100c0a',
+  frame: '#6f6440', pants: '#2b3442', shoe: '#ecebe4', sole: '#b8b6ad', watch: '#1a1a1a', headset: '#22252c', cushion: '#3a3f4a',
+  shell: '#d9d6c8', screen: '#8bac0f', screenInk: '#306230', dpad: '#1b1b1b', btn: '#7b1f4a',
+  phone: '#1b1b1b', case: '#e05a8a', lens: '#111111', rec: '#ff3b3b'
+};
+const TEE = { dev: '#1f1f22', player: '#f4f4ef', creator: '#22306b' };
+const LEVELS = { 1: { s: 1, px: 3 }, 2: { s: 0.5, px: 2 }, 3: { s: 1 / 3, px: 2 }, 4: { s: 0.25, px: 1 } };
+
+const sq = v => v * v;
+const ell = (x, y, z, cx, cy, cz, rx, ry, rz) => sq((x - cx) / rx) + sq((y - cy) / ry) + sq((z - cz) / rz) <= 1;
+const supell = (x, y, z, cx, cy, cz, rx, ry, rz, e) =>
+  Math.abs((x - cx) / rx) ** e + Math.abs((y - cy) / ry) ** e + Math.abs((z - cz) / rz) ** e <= 1;
+const rbox = (x, y, z, cx, cy, cz, hx, hy, hz, r) => {
+  const qx = Math.abs(x - cx) - hx + r, qy = Math.abs(y - cy) - hy + r, qz = Math.abs(z - cz) - hz + r;
+  return Math.hypot(Math.max(qx, 0), Math.max(qy, 0), Math.max(qz, 0)) + Math.min(Math.max(qx, qy, qz), 0) - r <= 0;
+};
+const seg = (x, y, z, ax, ay, az, bx, by, bz, r) => {
+  const abx = bx - ax, aby = by - ay, abz = bz - az;
+  const t = Math.max(0, Math.min(1, ((x - ax) * abx + (y - ay) * aby + (z - az) * abz) / (abx * abx + aby * aby + abz * abz)));
+  return Math.hypot(x - ax - abx * t, y - ay - aby * t, z - az - abz * t) <= r;
+};
+const faceZ = (x, y) => { const k = 1 - Math.abs(x / 6.5) ** 2.6 - Math.abs((y - 15.6) / 6) ** 2.6; return k > 0 ? 5.6 * k ** (1 / 2.6) : 0; };
+const noise = (x, y, z) => { const n = Math.sin(x * 12.9898 + y * 78.233 + z * 37.719) * 43758.5453; return n - Math.floor(n); };
+const TUFTS = [[-4.4, 20.6, -2.2], [-3.0, 21.3, 0.6], [-1.4, 21.6, -1.6], [0.2, 21.9, 1.4], [1.9, 21.7, -0.4], [3.4, 21.3, 1.8],
+  [4.6, 20.6, -1.2], [-2.2, 21.5, 3.2], [1.2, 21.8, 3.6], [-0.4, 21.3, -3.4], [2.8, 20.8, -3.0], [-3.8, 20.6, 2.8],
+  [-0.9, 22.0, 2.2], [2.6, 21.6, 3.0], [4.2, 20.9, 2.4]];
+const hairShade = (x, y, z) => { const n = noise(x, y, z); return n > 0.9 ? COL.hairHi : n < 0.08 ? COL.hairLo : COL.hair; };
+
+function colorAt(v, x, y, z, s) {
+  const th = Math.max(0.5, s * 1.01);
+  const ax = Math.abs(x);
+  const hold = v !== 'dev';
+
+  // glasses: open square frames that wrap just in front of the face, bridge, temples to the ears
+  const zf = faceZ(Math.min(ax, 6.2), y) + 0.25;
+  if (z >= zf && z <= zf + th) {
+    for (const sx of [-1, 1]) {
+      const cx = sx * 2.9, cy = 14.6;
+      const outer = Math.abs(x - cx) <= 2.3 && Math.abs(y - cy) <= 1.7;
+      const inner = Math.abs(x - cx) <= 2.3 - th && Math.abs(y - cy) <= 1.7 - th;
+      if (outer && !inner) return COL.frame;
+    }
+    if (ax <= 0.6 && y >= 16.3 - th && y <= 16.3) return COL.frame;
+    if (ax >= 5.2 && ax <= 6.55 + th && y >= 16.3 - th && y <= 16.3) return COL.frame;
+  }
+  if (ax >= 6.55 && ax <= 6.55 + th && y >= 16.3 - th && y <= 16.3 && z >= 0.6 && z <= 3.2) return COL.frame;
+
+  // headset with mic (dev mode)
+  if (v === 'dev') {
+    if (ax >= 6.9 && ax <= 8.4 && Math.hypot(y - 14.3, z - 0.3) <= 2.2) return ax <= 7.3 ? COL.cushion : COL.headset;
+    const r = Math.hypot(x, y - 15.5);
+    if (y >= 15.8 && r >= 8.3 && r <= 8.3 + th * 1.6 && Math.abs(z - 0.3) <= 0.55 + s / 2) return COL.headset;
+    if (ell(x, y, z, 3.2, 11.4, 6.9, 0.7, 0.6, 0.6)) return COL.headset;
+    if (seg(x, y, z, 8.0, 12.6, 1.8, 3.4, 11.4, 6.9, 0.35 + s / 2)) return COL.cushion;
+  }
+
+  // hands and arms
+  if (hold) {
+    for (const sx of [-1, 1]) {
+      if (ell(x, y, z, sx * 3.9, 5.7, 3.6, 0.95, 1.0, 0.9)) return COL.skin;
+    }
+    if (v === 'player' && rbox(x, y, z, 0, 6.4, 3.7, 2.9, 2.3, 0.5, 0.35)) {
+      if (z > 3.9) {
+        if (ax <= 2.0 && y >= 6.8 && y <= 8.2) return (Math.abs(ax - 0.8) <= 0.3 && Math.abs(y - 7.7) <= 0.3) ? COL.screenInk : COL.screen;
+        if ((Math.abs(x + 1.6) <= 0.9 && Math.abs(y - 5.3) <= 0.3) || (Math.abs(x + 1.6) <= 0.3 && Math.abs(y - 5.3) <= 0.9)) return COL.dpad;
+        if (Math.hypot(x - 1.0, y - 5.0) <= 0.5 || Math.hypot(x - 2.0, y - 5.6) <= 0.5) return COL.btn;
+      }
+      return COL.shell;
+    }
+    if (v === 'creator' && rbox(x, y, z, 0, 6.2, 3.6, 3.0, 1.6, 0.4, 0.3)) {
+      if (z > 3.7) {
+        if (Math.hypot(x + 2.1, y - 7.0) <= 0.45 || Math.hypot(x + 2.1, y - 5.9) <= 0.45 || Math.hypot(x + 1.1, y - 7.0) <= 0.45) return COL.lens;
+        if (Math.hypot(x - 2.2, y - 7.1) <= 0.35) return COL.rec;
+        return COL.case;
+      }
+      return COL.phone;
+    }
+    for (const sx of [-1, 1]) {
+      if (seg(x, y, z, sx * 5.1, 8.0, 0, sx * 5.0, 6.0, 0.2, 0.95)) return COL.skin;
+      if (seg(x, y, z, sx * 5.0, 5.9, 0.2, sx * 4.2, 5.6, 3.2, 0.9)) {
+        if (sx < 0 && z >= 1.9 && z <= 2.5 + s / 2) return COL.watch;
+        return COL.skin;
+      }
+    }
+  }
+
+  // hair: short tapered sides, uneven side-swept fringe, swept-up volume on top-front, textured tufts
+  if (supell(x, y, z, 0, 16.4, -0.3, 7.25, 7.0, 6.5, 2.6)) {
+    const front = z > 2.2;
+    const edge = 18.5 + 0.22 * x + 0.3 * Math.sin(x * 1.9);
+    const top = front ? y > edge : y > 17.4;
+    const side = ax > 5.7 && y > 16.8 && z < 3.8;
+    const back = z < -2.0 && y > 10.8;
+    if (top || side || back) return hairShade(x, y, z);
+  }
+  if (ell(x, y, z, 0.4, 21.9, 3.0, 5.6, 2.2, 3.2)) return hairShade(x, y, z);
+  for (const [tx, ty, tz] of TUFTS) {
+    if (ell(x, y, z, tx, ty + 0.7, tz, 1.7, 1.3, 1.7)) return hairShade(x, y, z);
+  }
+
+  // nose, then face painted onto the head
+  if (rbox(x, y, z, 0, 13.6, 5.6, 0.55, 0.9, 0.5, 0.2)) return COL.nose;
+  if (supell(x, y, z, 0, 15.6, 0, 6.5, 6.0, 5.6, 2.6)) {
+    if (z > 3.5) {
+      if (ax >= 1.7 && ax <= 5.2 && y >= 17.0 && y <= 17.8 + 0.08 * (ax - 1.7)) return COL.hair;
+      // open eyes: white, dark iris with a little glint, lash line on top
+      const hx = x - Math.sign(x) * 3.0, ey = y - 14.55;
+      if (sq(hx / 0.95) + sq(ey / 0.62) <= 1) {
+        if (ey > 0.62 * Math.sqrt(Math.max(0, 1 - sq(hx / 0.95))) - 0.22) return COL.eye;
+        if (Math.hypot(hx + 0.18, ey - 0.16) <= 0.16) return COL.glint;
+        if (Math.hypot(hx, ey + 0.02) <= 0.5) return COL.iris;
+        return COL.sclera;
+      }
+      if (ax <= 1.9 && y >= 11.0 && y <= 11.6) return COL.lip;
+      if (ax <= 1.5 && y > 11.6 && y <= 12.0) return COL.lipTop;
+    }
+    return COL.skin;
+  }
+  for (const sx of [-1, 1]) if (ell(x, y, z, sx * 6.5, 14.2, 0.4, 0.8, 1.4, 1.0)) return COL.skin;
+  if (ax <= 1.6 && Math.abs(z - 0.3) <= 1.6 && y >= 9.3 && y <= 10.5) return COL.skin;
+
+  // dev mode: arms down, watch on the left wrist
+  if (v === 'dev') {
+    for (const sx of [-1, 1]) {
+      if (ell(x, y, z, sx * 5.2, 3.6, 0.3, 1.0, 1.0, 1.0)) return COL.skin;
+      if (seg(x, y, z, sx * 5.1, 7.6, 0, sx * 5.2, 4.2, 0.2, 0.95)) {
+        if (sx < 0 && y >= 4.5 && y <= 5.2 + s / 2) return COL.watch;
+        return COL.skin;
+      }
+    }
+  }
+
+  // tee, sleeves, legs, shoes
+  for (const sx of [-1, 1]) if (rbox(x, y, z, sx * 4.9, 8.6, 0, 1.0, 1.2, 1.3, 0.5)) return TEE[v];
+  if (rbox(x, y, z, 0, 6.9, 0, 4.3, 2.9, 2.5, 1.0)) return (y > 9.0 && ax <= 1.4 && z > 1.0) ? COL.skin : TEE[v];
+  for (const sx of [-1, 1]) {
+    if (rbox(x, y, z, sx * 1.8, 2.4, 0, 1.3, 1.6, 1.4, 0.4)) return COL.pants;
+    if (rbox(x, y, z, sx * 1.8, 0.55, 0.6, 1.4, 0.55, 2.0, 0.4)) return y < 0.3 ? COL.sole : COL.shoe;
+  }
+  return null;
+}
+
+// Sample the shapes on a grid of step s and keep only surface blocks.
+function voxelize(v, s) {
+  const X0 = -9.6, Y0 = -0.2, Z0 = -7.6, nx = Math.ceil(19.2 / s), ny = Math.ceil(25.8 / s), nz = Math.ceil(16.4 / s);
+  const colors = [], index = new Map(), grid = new Int16Array(nx * ny * nz).fill(-1);
+  const at = (i, j, k) => (i < 0 || j < 0 || k < 0 || i >= nx || j >= ny || k >= nz) ? -1 : grid[(i * ny + j) * nz + k];
+  for (let i = 0; i < nx; i++) for (let j = 0; j < ny; j++) for (let k = 0; k < nz; k++) {
+    const c = colorAt(v, X0 + (i + 0.5) * s, Y0 + (j + 0.5) * s, Z0 + (k + 0.5) * s, s);
+    if (c === null) continue;
+    if (!index.has(c)) { index.set(c, colors.length); colors.push(c); }
+    grid[(i * ny + j) * nz + k] = index.get(c);
+  }
+  const byColor = colors.map(() => []);
+  for (let i = 0; i < nx; i++) for (let j = 0; j < ny; j++) for (let k = 0; k < nz; k++) {
+    const c = grid[(i * ny + j) * nz + k];
+    if (c < 0) continue;
+    if (at(i + 1, j, k) >= 0 && at(i - 1, j, k) >= 0 && at(i, j + 1, k) >= 0 && at(i, j - 1, k) >= 0 && at(i, j, k + 1) >= 0 && at(i, j, k - 1) >= 0) continue;
+    byColor[c].push(X0 + (i + 0.5) * s, Y0 + (j + 0.5) * s, Z0 + (k + 0.5) * s);
+  }
+  return colors.map((c, n) => [c, byColor[n]]);
+}
+
+const CSS = 300, DPR = window.devicePixelRatio || 1;
+const views = [...document.querySelectorAll('canvas[data-variant]')].map((canvas, i) => {
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true });
+  renderer.setPixelRatio(1);
+  const scene = new THREE.Scene();
+  const cam = new THREE.OrthographicCamera(-15.5, 15.5, 15.5, -15.5, 0.1, 200);
+  cam.position.set(14, 12, 34); cam.lookAt(0, 0, 0);
+  scene.add(new THREE.AmbientLight(0xffffff, 1.15));
+  const sun = new THREE.DirectionalLight(0xffffff, 1.7); sun.position.set(8, 14, 12); scene.add(sun);
+  const pivot = new THREE.Group(), inner = new THREE.Group();
+  pivot.add(inner); scene.add(pivot);
+  const st = { variant: canvas.dataset.variant, renderer, scene, cam, pivot, inner, drag: null, offset: 0, lastInput: -1e9, hopAt: -1e9, phase: i * 1.7 };
+  canvas.addEventListener('pointerdown', e => { canvas.setPointerCapture(e.pointerId); st.drag = { x: e.clientX, moved: 0 }; });
+  canvas.addEventListener('pointermove', e => {
+    if (!st.drag) return;
+    const dx = e.clientX - st.drag.x; st.drag.x = e.clientX; st.drag.moved += Math.abs(dx);
+    st.offset += dx * 0.012; st.lastInput = performance.now();
+  });
+  canvas.addEventListener('pointerup', () => { if (st.drag && st.drag.moved < 4) st.hopAt = performance.now(); st.drag = null; });
+  return st;
+});
+
+function build(level) {
+  const { s, px } = LEVELS[level];
+  const res = Math.round(CSS * DPR / px);
+  const geo = new THREE.BoxGeometry(s, s, s);
+  const m = new THREE.Matrix4();
+  for (const st of views) {
+    st.renderer.setSize(res, res, false);
+    for (const child of [...st.inner.children]) { child.material.dispose(); st.inner.remove(child); }
+    st.inner.position.set(0, 0, 0);
+    for (const [c, pts] of voxelize(st.variant, s)) {
+      const n = pts.length / 3;
+      if (!n) continue;
+      const mesh = new THREE.InstancedMesh(geo, new THREE.MeshLambertMaterial({ color: c }), n);
+      for (let j = 0; j < n; j++) { m.makeTranslation(pts[j * 3], pts[j * 3 + 1], pts[j * 3 + 2]); mesh.setMatrixAt(j, m); }
+      st.inner.add(mesh);
+    }
+    st.inner.position.sub(new THREE.Box3().setFromObject(st.inner).getCenter(new THREE.Vector3()));
+  }
+}
+
+const busy = document.getElementById('busy');
+document.querySelectorAll('.levels button').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.levels button').forEach(o => o.classList.toggle('on', o === b));
+  busy.textContent = 'building…';
+  setTimeout(() => { build(+b.dataset.level); busy.textContent = ''; }, 20);
+}));
+build(4);
+
+function tick(t) {
+  for (const s of views) {
+    const idle = t - s.lastInput > 2500;
+    if (idle) s.offset *= 0.97;
+    s.pivot.rotation.y = s.offset + (idle ? Math.sin(t / 1600 + s.phase) * 0.6 : 0);
+    const h = (t - s.hopAt) / 450;
+    s.pivot.position.y = (h >= 0 && h <= 1 ? Math.sin(h * Math.PI) * 2.5 : 0) + Math.sin(t / 500 + s.phase) * 0.15;
+    s.renderer.render(s.scene, s.cam);
+  }
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+</script>
