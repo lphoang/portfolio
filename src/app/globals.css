@@ -20,7 +20,6 @@
   --badge-ink: #030805;
   --panel: #06110a;
   --line: #1f8a46;
-  --bar: #2aa84a;
   --focus: #39ff6a;
   --haze-rgb: 3 8 5;
   --haze: 0.65;
@@ -60,7 +59,6 @@
   --seal: #8e2b20;
   --seal-ink: #f6e7c8;
   --seal-light: #b03d31;
-  --bar: #2f5aa0;
   --focus: #f4d35e;
   --haze-rgb: 10 26 63;
   --haze: 0.78;
@@ -86,7 +84,6 @@
   --color-num: var(--num);
   --color-badge: var(--badge);
   --color-badge-ink: var(--badge-ink);
-  --color-bar: var(--bar);
 
   --font-display: var(--era-display), ui-serif, serif;
   --font-sans: var(--era-sans), ui-monospace, monospace;

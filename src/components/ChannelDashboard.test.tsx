@@ -52,13 +52,13 @@ test('hidden subscribers read "hidden"', () => {
   expect(render(stats({ subscribers: null }))).toContain('hidden')
 })
 
-test('three videos draw three bars and list three titles', () => {
+test('three videos list three titles, with no views chart', () => {
   const html = render(stats())
-  expect(html.match(/<rect/g)).toHaveLength(3)
   for (const id of ['a', 'b', 'c']) expect(html).toContain(`Video ${id}`)
+  expect(html).not.toContain('<svg')
 })
 
-test('no uploads shows "No videos yet" and no chart', () => {
+test('no uploads shows "No videos yet"', () => {
   const html = render(stats({ latest: [] }))
   expect(html).toContain('No videos yet')
   expect(html).not.toContain('<svg')

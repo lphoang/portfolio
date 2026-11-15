@@ -118,7 +118,6 @@ Approved mockup: `2026-11-15-eras/eras-reference.html`. Open it in a browser and
 | wax seal | radial `#c2463a` → `#8e2b20` → `#6b1c14`, text `#f6e7c8` |
 
 - No gold anywhere in 1889.
-- The chart bar colors are picked per era with the dataviz validator: a mid green on the terminal panel, and Prussian blue (or the nearest passing step) on paper.
 
 ### Fonts (Google Fonts via `next/font`)
 
@@ -246,5 +245,4 @@ The props per page stay the same in both eras: headset on Home (terminal only), 
 
 - Canvas tuning: particle counts, speeds, fade rates.
 - The component structure.
-- The exact chart bar colors, after running the validator.
 - How the reduced-motion still frames are painted.
