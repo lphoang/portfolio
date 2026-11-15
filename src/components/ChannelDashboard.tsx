@@ -4,7 +4,6 @@ import type { ChannelStats, VideoStats } from '@/lib/youtube'
 
 import { SectionLabel } from './SectionLabel'
 import { Stat } from './Stat'
-import { ViewsChart } from './ViewsChart'
 
 type Props = { channel: ChannelConfig; stats: ChannelStats | null }
 
@@ -110,14 +109,11 @@ export function ChannelDashboard({ channel, stats }: Props) {
             {stats.latest.length === 0 ? (
               <p className="text-sm text-muted">No videos yet.</p>
             ) : (
-              <>
-                <ViewsChart videos={stats.latest} />
-                <ol className="mt-3 divide-y divide-line">
-                  {stats.latest.map(video => (
-                    <VideoRow key={video.id} video={video} />
-                  ))}
-                </ol>
-              </>
+              <ol className="mt-3 divide-y divide-line">
+                {stats.latest.map(video => (
+                  <VideoRow key={video.id} video={video} />
+                ))}
+              </ol>
             )}
           </section>
         </div>

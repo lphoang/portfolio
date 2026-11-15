@@ -83,7 +83,7 @@ Top to bottom:
 - Each dashboard shows:
   - channel name, avatar, its one line, and a link to the channel,
   - three big numbers: **subscribers**, **total views**, **videos**,
-  - a **bar chart of views** for the latest ~10 uploads,
+  - (the bar chart of views was removed later at the owner's request),
   - a list of those uploads, one row each (changed later at the owner's request): a small cover on the left (Shorts as a 9:16 crop of the 480×360 thumbnail; landscape videos whole on their 16:9 thumbnail over a blurred copy; the shape comes from `videos.list` `part=player` with `maxHeight`), then the title (links to YouTube) and date · views · likes · comments, with singular words for 1.
 - Data comes from the **YouTube Data API v3** with one API key. For each channel:
   `channels.list` (find the channel by handle, get its statistics and uploads playlist), then `playlistItems.list` (latest 10 uploads), then `videos.list` (their statistics). About 3 quota units per channel per refresh, far below the free 10,000 per day.
@@ -189,6 +189,5 @@ Approved mockup: `2026-11-15-portfolio-refresh/figure-reference.html`. Its `colo
 
 - Exact package versions (latest stable at install time).
 - Component and folder structure, as long as it stays simple.
-- The bar chart: plain SVG or CSS bars are fine; no chart library needed.
 - Exact file format for the figure data (e.g. JSON with a color list plus packed positions), as long as each outfit stays small (aim for under ~150 KB gzipped).
 - Small spacing and size choices within the design above.
