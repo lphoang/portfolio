@@ -14,8 +14,8 @@ import { easeOffset, frameloopFor, pose } from './pose'
 import type { FigureData } from './voxelize'
 import { hasWebGL } from './webgl'
 
-// Model units visible across the canvas; the figure is about 29 units tall with the 1889 hat.
-const VIEW_UNITS = 34
+// Model units visible across the canvas; the figure is about 25 units tall.
+const VIEW_UNITS = 31
 const PHASE: Record<Variant, number> = { dev: 0, creator: 1.7, player: 3.4 }
 const DRAG_SPEED = 0.012 // radians per pixel
 const CLICK_SLOP = 4 // px of movement that still counts as a click
@@ -183,8 +183,8 @@ export default function VoxelFigure({ variant, inView }: Props) {
   const [loaded, setLoaded] = useState<Partial<Record<Era, FigureData>>>({})
   const pending = useRef(new Set<Era>())
 
-  // Load this era's figure now and the other era's once the browser is idle, so
-  // switching eras swaps outfits without waiting or downloading anything again.
+  // Load this mode's figure now and the other mode's once the browser is idle, so
+  // switching modes swaps outfits without waiting or downloading anything again.
   useEffect(() => {
     // No WebGL: skip the download too; the placeholder stays.
     if (!webgl) return

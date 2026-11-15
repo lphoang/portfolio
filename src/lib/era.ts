@@ -1,11 +1,14 @@
-export type Era = 'starry' | 'terminal'
+// The two looks of the site: Vibe mode (Game Boy greens on a starry night sky)
+// and Dev mode (a green terminal). The code calls them eras.
+export type Era = 'vibe' | 'dev'
 
 export const ERA_KEY = 'era'
-export const DEFAULT_ERA: Era = 'terminal'
+export const DEFAULT_ERA: Era = 'dev'
 
-// A saved era wins; anything else (nothing saved, an old light/dark value) is the terminal.
+// A saved mode wins; anything else (nothing saved, a value from an older version
+// of the site) is Dev mode.
 export function resolveEra(stored: string | null): Era {
-  return stored === 'starry' || stored === 'terminal' ? stored : 'terminal'
+  return stored === 'vibe' || stored === 'dev' ? stored : 'dev'
 }
 
 export function faviconFor(era: Era): string {

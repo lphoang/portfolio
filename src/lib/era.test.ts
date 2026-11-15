@@ -1,18 +1,18 @@
 import { eraScript, faviconFor, resolveEra } from './era'
 
-test('a stored valid era wins', () => {
-  expect(resolveEra('starry')).toBe('starry')
-  expect(resolveEra('terminal')).toBe('terminal')
+test('a stored valid mode wins', () => {
+  expect(resolveEra('vibe')).toBe('vibe')
+  expect(resolveEra('dev')).toBe('dev')
 })
 
-test('anything else falls back to the terminal', () => {
-  for (const stored of [null, 'light', 'dark', 'purple'])
-    expect(resolveEra(stored)).toBe('terminal')
+test('anything else falls back to dev mode', () => {
+  for (const stored of [null, 'light', 'dark', 'starry', 'terminal', 'purple'])
+    expect(resolveEra(stored)).toBe('dev')
 })
 
-test('favicons follow the era', () => {
-  expect(faviconFor('terminal')).toBe('/icons/era-terminal.svg')
-  expect(faviconFor('starry')).toBe('/icons/era-starry.svg')
+test('favicons follow the mode', () => {
+  expect(faviconFor('dev')).toBe('/icons/era-dev.svg')
+  expect(faviconFor('vibe')).toBe('/icons/era-vibe.svg')
 })
 
 // Runs the inline head script against a tiny fake page.
@@ -25,14 +25,14 @@ function runScript(getItem: () => string | null) {
   return root.dataset.era
 }
 
-test('the head script survives blocked storage and picks the terminal', () => {
+test('the head script survives blocked storage and picks dev mode', () => {
   expect(
     runScript(() => {
       throw new Error('blocked')
     })
-  ).toBe('terminal')
+  ).toBe('dev')
 })
 
-test('the head script applies the stored era', () => {
-  expect(runScript(() => 'starry')).toBe('starry')
+test('the head script applies the stored mode', () => {
+  expect(runScript(() => 'vibe')).toBe('vibe')
 })

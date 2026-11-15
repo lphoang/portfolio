@@ -11,7 +11,7 @@ export function shouldAnimate(input: {
   return input.era === input.own && !input.hidden && !input.reducedMotion
 }
 
-// ---------- 1889: the swirling night sky ----------
+// ---------- Vibe: the swirling night sky ----------
 
 // Star positions as fractions of the viewport, and their radius in px.
 // Kept out of the middle text column (x 0.3–0.7) below the top 20%.
@@ -28,16 +28,18 @@ export const STARS: [x: number, y: number, r: number][] = [
   [0.9, 0.8, 12]
 ]
 
-// The bright center of a star, and the blues of the brush strokes.
-export const STAR_CORE = '#fff6c8'
-export const BLUES = [
-  '#1d3f8f',
-  '#2a56ad',
-  '#3a6fc0',
-  '#1a2f6e',
-  '#5b86c9',
-  '#203e86',
-  '#7fa6d9'
+// The sky (the same as --bg in Vibe mode), the bright center of a star, and the
+// brush stroke colors: The Starry Night repainted in Game Boy greens.
+export const SKY = '#0f1f14'
+export const STAR_CORE = '#e8f5d0'
+export const STROKES = [
+  '#1f4a2a',
+  '#2e6b3a',
+  '#3f8a48',
+  '#1a3a22',
+  '#5ea35a',
+  '#2a5c34',
+  '#8cc46e'
 ]
 
 // Swirl centers as fractions of the viewport, and their reach.

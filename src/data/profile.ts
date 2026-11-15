@@ -6,7 +6,7 @@ export const profile = {
     'Reading detective books',
     'Adventure movies',
     'Coding',
-    'Pokémon (games and anime)'
+    'Pokémon'
   ],
   links: [
     { label: 'GitHub', text: '@lphoang', url: 'https://github.com/lphoang' },

@@ -1,9 +1,10 @@
 import {
-  BLUES,
   RAIN_GLYPHS,
   RAIN_GREENS,
+  SKY,
   STARS,
   STAR_CORE,
+  STROKES,
   flow
 } from './motion'
 
@@ -17,7 +18,7 @@ export type Painter = {
 
 const pick = <T>(list: T[]) => list[Math.floor(Math.random() * list.length)]
 
-// ---------- 1889: brush strokes flowing around swirls, glowing stars, the moon ----------
+// ---------- Vibe: brush strokes flowing around swirls, glowing stars, the moon ----------
 
 type Stroke = { x: number; y: number; life: number; color: string }
 
@@ -28,7 +29,7 @@ export function reborn(w: number, h: number): Stroke {
     x: Math.random() < 0.5 ? -5 : Math.random() * w,
     y: Math.random() * h * 0.8,
     life: 60 + Math.random() * 120,
-    color: pick(BLUES)
+    color: pick(STROKES)
   }
 }
 
@@ -43,8 +44,8 @@ export function createStarryPainter(ctx: CanvasRenderingContext2D): Painter {
 
   function paintBase() {
     const sky = ctx.createLinearGradient(0, 0, 0, h)
-    sky.addColorStop(0, '#0b1d48')
-    sky.addColorStop(1, '#0a1a3f')
+    sky.addColorStop(0, '#132a1a')
+    sky.addColorStop(1, SKY)
     ctx.fillStyle = sky
     ctx.fillRect(0, 0, w, h)
   }
@@ -53,7 +54,8 @@ export function createStarryPainter(ctx: CanvasRenderingContext2D): Painter {
   // Segments are batched by color, so each frame needs only a few draw calls.
   function paintStrokes() {
     t++
-    ctx.fillStyle = 'rgba(10,26,63,0.035)'
+    // The sky color, faintly: old strokes fade into it.
+    ctx.fillStyle = 'rgba(15,31,20,0.035)'
     ctx.fillRect(0, 0, w, h)
     const paths = new Map<string, Path2D>()
     for (const s of strokes) {
@@ -87,13 +89,13 @@ export function createStarryPainter(ctx: CanvasRenderingContext2D): Painter {
       const size = r * (pulse ? 1 + 0.12 * Math.sin(t * 0.03 + sx * 9) : 1)
       const glow = ctx.createRadialGradient(x, y, 0, x, y, size * 2.4)
       glow.addColorStop(0, STAR_CORE)
-      glow.addColorStop(0.25, 'rgba(244,211,94,.75)')
-      glow.addColorStop(1, 'rgba(244,211,94,0)')
+      glow.addColorStop(0.25, 'rgba(212,236,138,.75)')
+      glow.addColorStop(1, 'rgba(212,236,138,0)')
       ctx.fillStyle = glow
       ctx.beginPath()
       ctx.arc(x, y, size * 2.4, 0, Math.PI * 2)
       ctx.fill()
-      ctx.strokeStyle = 'rgba(247,228,139,.35)'
+      ctx.strokeStyle = 'rgba(226,240,212,.35)'
       ctx.lineWidth = 2
       ctx.beginPath()
       ctx.arc(x, y, size * 1.3, 0, Math.PI * 2)
@@ -103,18 +105,18 @@ export function createStarryPainter(ctx: CanvasRenderingContext2D): Painter {
     const my = 0.14 * h
     const mr = Math.min(w, h) * 0.05
     const halo = ctx.createRadialGradient(mx, my, 0, mx, my, mr * 2.6)
-    halo.addColorStop(0, 'rgba(255,214,90,.9)')
-    halo.addColorStop(0.4, 'rgba(244,180,60,.5)')
-    halo.addColorStop(1, 'rgba(244,180,60,0)')
+    halo.addColorStop(0, 'rgba(212,236,138,.8)')
+    halo.addColorStop(0.4, 'rgba(155,217,107,.3)')
+    halo.addColorStop(1, 'rgba(155,217,107,0)')
     ctx.fillStyle = halo
     ctx.beginPath()
     ctx.arc(mx, my, mr * 2.6, 0, Math.PI * 2)
     ctx.fill()
-    ctx.fillStyle = '#ffd65a'
+    ctx.fillStyle = '#d4ec8a'
     ctx.beginPath()
     ctx.arc(mx, my, mr, 0, Math.PI * 2)
     ctx.fill()
-    ctx.fillStyle = '#c98a1c'
+    ctx.fillStyle = '#5f8f4a'
     ctx.beginPath()
     ctx.arc(mx + mr * 0.45, my - mr * 0.2, mr * 0.85, 0, Math.PI * 2)
     ctx.fill()

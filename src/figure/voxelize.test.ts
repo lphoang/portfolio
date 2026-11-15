@@ -11,14 +11,14 @@ const cellCount = (data: FigureData) =>
   data.groups.reduce((n, g) => n + g.cells.length / 3, 0)
 
 const VARIANTS: Variant[] = ['dev', 'player', 'creator']
-const ERAS: Era[] = ['starry', 'terminal']
+const ERAS: Era[] = ['vibe', 'dev']
 
 test('same input, same output', () => {
-  expect(voxelize('dev', 'starry', 0.5)).toEqual(voxelize('dev', 'starry', 0.5))
+  expect(voxelize('dev', 'vibe', 0.5)).toEqual(voxelize('dev', 'vibe', 0.5))
 })
 
 test('only surface cubes are kept', () => {
-  const data = voxelize('player', 'terminal', 0.5)
+  const data = voxelize('player', 'dev', 0.5)
   const filled = new Set<string>()
   for (const g of data.groups)
     for (let i = 0; i < g.cells.length; i += 3)
@@ -42,24 +42,24 @@ test('only surface cubes are kept', () => {
 })
 
 // At the shipped 4x detail: thin props like the phone's front only show up there.
-test('1889 Home wears the top hat, tie and brown glasses, and no headset', () => {
-  const colors = colorsOf(voxelize('dev', 'starry', 0.25))
+test('vibe Home wears the original outfit: headset, dark tee, olive glasses', () => {
+  const colors = colorsOf(voxelize('dev', 'vibe', 0.25))
   expect(colors).toEqual(
-    expect.arrayContaining(['#16141a', '#7a1f2b', '#4a3424', '#6b4a2b'])
+    expect.arrayContaining(['#22252c', '#1f1f22', '#6f6440'])
   )
-  expect(colors).not.toContain('#22252c') // headset
-  expect(colors).not.toContain('#3a3f4a') // cushion and mic
+  expect(colors).not.toContain('#39ff6a') // no green trim
+  expect(colors).not.toContain('#16141a') // no top hat
 })
 
-test('terminal Home keeps the headset and goes green', () => {
-  const colors = colorsOf(voxelize('dev', 'terminal', 0.25))
+test('dev Home keeps the headset and goes green', () => {
+  const colors = colorsOf(voxelize('dev', 'dev', 0.25))
   expect(colors).toEqual(
     expect.arrayContaining(['#22252c', '#39ff6a', '#c6ff3d', '#2bffc6'])
   )
   expect(colors).not.toContain('#16141a') // no top hat
 })
 
-test('every page keeps its prop in both eras', () => {
+test('every page keeps its prop in both modes', () => {
   for (const era of ERAS) {
     expect(colorsOf(voxelize('creator', era, 0.25))).toContain('#e05a8a') // phone case
     expect(colorsOf(voxelize('player', era, 0.25))).toContain('#8bac0f') // handheld screen

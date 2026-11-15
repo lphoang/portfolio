@@ -9,14 +9,15 @@ export function figureUrl(variant: Variant, era: Era): string {
 
 type Light = [color: string, intensity: number]
 
-// 1889: cool moonlit fill with a warm lamp; terminal: neutral with a green rim from behind.
+// Vibe: plain white light, as the figure had before the modes; Dev: neutral with a
+// green rim from behind.
 export function lightsFor(era: Era): {
   ambient: Light
   key: Light
   rim: Light
 } {
-  return era === 'starry'
-    ? { ambient: ['#9fb4ff', 1.0], key: ['#ffe2a8', 1.9], rim: ['#000000', 0] }
+  return era === 'vibe'
+    ? { ambient: ['#ffffff', 1.35], key: ['#ffffff', 2.0], rim: ['#000000', 0] }
     : {
         ambient: ['#ffffff', 0.95],
         key: ['#e0ffe8', 1.5],
@@ -24,18 +25,18 @@ export function lightsFor(era: Era): {
       }
 }
 
-// Which era's outfit to show: the current one once it has loaded, otherwise the
+// Which mode's outfit to show: the current one once it has loaded, otherwise the
 // other (already shown) one, so a slow download never leaves an empty square.
 export function pickShown(
   loaded: Partial<Record<Era, FigureData>>,
   era: Era
 ): Era | null {
   if (loaded[era]) return era
-  const other: Era = era === 'starry' ? 'terminal' : 'starry'
+  const other: Era = era === 'vibe' ? 'dev' : 'vibe'
   return loaded[other] ? other : null
 }
 
-// What to download: the current era's figure right away, the other era's once the
+// What to download: the current mode's figure right away, the other mode's once the
 // browser is idle; never one that is already loaded or on its way.
 export function nextLoads(input: {
   loaded: Partial<Record<Era, FigureData>>
@@ -43,7 +44,7 @@ export function nextLoads(input: {
   era: Era
 }): { now: Era | null; later: Era | null } {
   const missing = (era: Era) => !input.loaded[era] && !input.pending.has(era)
-  const other: Era = input.era === 'starry' ? 'terminal' : 'starry'
+  const other: Era = input.era === 'vibe' ? 'dev' : 'vibe'
   return {
     now: missing(input.era) ? input.era : null,
     later: missing(other) ? other : null
