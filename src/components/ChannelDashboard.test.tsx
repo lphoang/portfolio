@@ -101,3 +101,23 @@ test('a Short fills its tile; a landscape video is shown whole over a blurred co
   expect(wide).toContain('object-contain')
   expect(wide).toContain('blur')
 })
+
+test('counts read naturally: 1 like, 1 comment, 0 comments', () => {
+  const html = render(
+    stats({ latest: [video('a', { likes: 1, comments: 1 })] })
+  )
+  expect(html).toMatch(/1 like(?!s)/)
+  expect(html).toMatch(/1 comment(?!s)/)
+  const none = render(
+    stats({ latest: [video('b', { likes: 0, comments: 0 })] })
+  )
+  expect(none).toContain('0 likes')
+  expect(none).toContain('0 comments')
+})
+
+test('each video is one row: a small cover and its details in a single link', () => {
+  const html = render(stats({ latest: [video('a')] }))
+  const links = html.match(/href="https:\/\/www.youtube.com\/watch\?v=a"/g)
+  expect(links).toHaveLength(1)
+  expect(html).toContain('Nov 3, 2026')
+})
