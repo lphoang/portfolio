@@ -189,3 +189,21 @@ test('a failure during the production build still returns null', async () => {
     await getChannelStats(channel, 'key', fakeFetch({ status: 403 }).impl)
   ).toBeNull()
 })
+
+test('a channel with no videos skips the upload list and keeps its totals', async () => {
+  const empty = structuredClone(channelsResponse)
+  empty.items[0].statistics.videoCount = '0'
+  // YouTube answers 404 for the uploads playlist of a channel with no videos.
+  const calls: string[] = []
+  const impl = (async (input: RequestInfo | URL) => {
+    const url = new URL(String(input))
+    calls.push(url.pathname)
+    if (url.pathname.endsWith('/channels'))
+      return new Response(JSON.stringify(empty), { status: 200 })
+    return new Response('{}', { status: 404 })
+  }) as typeof fetch
+
+  const stats = await getChannelStats(channel, 'key', impl)
+  expect(stats).toMatchObject({ videos: 0, latest: [] })
+  expect(calls.some(path => path.endsWith('/playlistItems'))).toBe(false)
+})

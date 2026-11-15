@@ -92,11 +92,15 @@ export async function getChannelStats(
     const item = channels.items?.[0]
     if (!item) throw new YouTubeError('channel not found')
 
-    const playlist = await get<PlaylistResponse>('playlistItems', {
-      part: 'contentDetails',
-      maxResults: String(LATEST_COUNT),
-      playlistId: item.contentDetails.relatedPlaylists.uploads
-    })
+    // A channel without videos has no uploads playlist yet (YouTube answers 404).
+    const hasVideos = Number(item.statistics.videoCount ?? 0) > 0
+    const playlist = hasVideos
+      ? await get<PlaylistResponse>('playlistItems', {
+          part: 'contentDetails',
+          maxResults: String(LATEST_COUNT),
+          playlistId: item.contentDetails.relatedPlaylists.uploads
+        })
+      : { items: [] }
     const ids = (playlist.items ?? []).map(
       entry => entry.contentDetails.videoId
     )

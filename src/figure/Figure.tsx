@@ -1,11 +1,41 @@
 'use client'
 
 import dynamic from 'next/dynamic'
+import { Component, type ReactNode, useEffect, useRef, useState } from 'react'
 
 import type { Variant } from './model'
 
 // Three.js only loads with the figure, after the rest of the page.
 const VoxelFigure = dynamic(() => import('./VoxelFigure'), { ssr: false })
+
+// If anything in the 3D figure fails (GPU, driver, memory), keep the placeholder
+// instead of taking the whole page down.
+class FigureErrorBoundary extends Component<
+  { children: ReactNode },
+  { failed: boolean }
+> {
+  state = { failed: false }
+  static getDerivedStateFromError() {
+    return { failed: true }
+  }
+  render() {
+    return this.state.failed ? null : this.props.children
+  }
+}
+
+// True while the element is on screen, so the figure stops drawing when scrolled away.
+function useInView<T extends Element>() {
+  const ref = useRef<T>(null)
+  const [inView, setInView] = useState(true)
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) =>
+      setInView(entry.isIntersecting)
+    )
+    observer.observe(ref.current!)
+    return () => observer.disconnect()
+  }, [])
+  return { ref, inView }
+}
 
 type Props = { variant: Variant; label: string }
 
@@ -13,13 +43,17 @@ type Props = { variant: Variant; label: string }
 // In dark mode a soft light glow sits behind it: the dark hair and clothes would
 // otherwise blend into the dark background.
 export function Figure({ variant, label }: Props) {
+  const { ref, inView } = useInView<HTMLDivElement>()
   return (
     <div
+      ref={ref}
       role="img"
       aria-label={label}
       className="relative mx-auto size-64 rounded-full sm:size-72 dark:bg-[radial-gradient(circle,var(--spot)_0%,transparent_68%)]"
     >
-      <VoxelFigure variant={variant} />
+      <FigureErrorBoundary>
+        <VoxelFigure variant={variant} inView={inView} />
+      </FigureErrorBoundary>
     </div>
   )
 }
