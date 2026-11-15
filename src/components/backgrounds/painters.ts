@@ -21,18 +21,25 @@ const pick = <T>(list: T[]) => list[Math.floor(Math.random() * list.length)]
 
 type Stroke = { x: number; y: number; life: number; color: string }
 
+// A fresh brush stroke after one dies: half enter from the left edge, the rest
+// start anywhere across the canvas (never beyond its right edge).
+export function reborn(w: number, h: number): Stroke {
+  return {
+    x: Math.random() < 0.5 ? -5 : Math.random() * w,
+    y: Math.random() * h * 0.8,
+    life: 60 + Math.random() * 120,
+    color: pick(BLUES)
+  }
+}
+
 export function createStarryPainter(ctx: CanvasRenderingContext2D): Painter {
   let w = 0
   let h = 0
   let t = 0
+  let last = -Infinity
   let strokes: Stroke[] = []
 
-  const spawn = (): Stroke => ({
-    x: Math.random() * w,
-    y: Math.random() * h * 0.8,
-    life: 60 + Math.random() * 120,
-    color: pick(BLUES)
-  })
+  const spawn = (): Stroke => ({ ...reborn(w, h), x: Math.random() * w })
 
   function paintBase() {
     const sky = ctx.createLinearGradient(0, 0, 0, h)
@@ -61,7 +68,7 @@ export function createStarryPainter(ctx: CanvasRenderingContext2D): Painter {
       s.y = ny
       s.life--
       if (s.life < 0 || s.x > w + 10 || s.y < -10 || s.y > h)
-        Object.assign(s, spawn(), { x: Math.random() < 0.5 ? -5 : s.x })
+        Object.assign(s, reborn(w, h))
     }
     ctx.lineCap = 'round'
     ctx.lineWidth = 2.4
@@ -120,7 +127,11 @@ export function createStarryPainter(ctx: CanvasRenderingContext2D): Painter {
       paintBase()
       strokes = Array.from({ length: Math.min(900, (w * h) / 1400) }, spawn)
     },
-    frame() {
+    // About 60 steps a second whatever the screen's refresh rate, so the swirl
+    // keeps its speed (and battery use) on 120 Hz screens.
+    frame(time) {
+      if (time - last < 15) return
+      last = time
       paintStrokes()
       paintStarsAndMoon(true)
     },
@@ -143,9 +154,7 @@ export function createRainPainter(ctx: CanvasRenderingContext2D): Painter {
   let h = 0
   let last = 0
   let columns: Column[] = []
-  // next/font gives the font a generated family name; read it from its variable.
-  const font = () =>
-    `${SIZE}px ${getComputedStyle(document.documentElement).getPropertyValue('--font-vt323') || 'monospace'}`
+  let font = `${SIZE}px monospace`
 
   function clear(alpha: number) {
     ctx.fillStyle = `rgba(3,8,5,${alpha})`
@@ -163,6 +172,11 @@ export function createRainPainter(ctx: CanvasRenderingContext2D): Painter {
     resize(width, height) {
       w = width
       h = height
+      // next/font gives the font a generated family name; read it from its variable once.
+      const family = getComputedStyle(document.documentElement)
+        .getPropertyValue('--font-vt323')
+        .trim()
+      font = `${SIZE}px ${family || 'monospace'}`
       columns = Array.from({ length: Math.ceil(w / SIZE) }, () => ({
         y: Math.random() * h,
         speed: 0.4 + Math.random() * 0.9,
@@ -175,7 +189,7 @@ export function createRainPainter(ctx: CanvasRenderingContext2D): Painter {
       if (time - last < 50) return
       last = time
       clear(0.12)
-      ctx.font = font()
+      ctx.font = font
       columns.forEach((col, i) => {
         glyph(i * SIZE, col.y, col.color, 0.28)
         col.y += SIZE * col.speed
@@ -184,7 +198,7 @@ export function createRainPainter(ctx: CanvasRenderingContext2D): Painter {
     },
     still() {
       clear(1)
-      ctx.font = font()
+      ctx.font = font
       columns.forEach((col, i) => {
         for (let k = 0; k < 6; k++)
           glyph(i * SIZE, Math.random() * h, col.color, 0.18)

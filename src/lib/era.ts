@@ -12,15 +12,9 @@ export function faviconFor(era: Era): string {
   return `/icons/era-${era}.svg`
 }
 
-function setFavicon(era: Era) {
-  const icon = document.querySelector<HTMLLinkElement>('link[rel="icon"]')
-  if (icon) icon.href = faviconFor(era)
-}
-
 // Switches the page to an era and remembers it.
 export function applyEra(next: Era) {
   document.documentElement.dataset.era = next
-  setFavicon(next)
   try {
     localStorage.setItem(ERA_KEY, next)
   } catch {
@@ -36,6 +30,4 @@ export const eraScript = `(function () {
   try { stored = localStorage.getItem('${ERA_KEY}'); } catch (e) {}
   var era = resolveEra(stored);
   document.documentElement.dataset.era = era;
-  var icon = document.querySelector('link[rel="icon"]');
-  if (icon) icon.href = '/icons/era-' + era + '.svg';
 })();`

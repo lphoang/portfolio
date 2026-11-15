@@ -49,7 +49,7 @@ export function Figure({ variant, label }: Props) {
       ref={ref}
       role="img"
       aria-label={label}
-      className="relative mx-auto size-64 rounded-full bg-[radial-gradient(circle,var(--glow)_0%,transparent_68%)] sm:size-72"
+      className="relative mx-auto size-64 rounded-full [background:var(--glow-bg)] sm:size-72"
     >
       <FigureErrorBoundary>
         <VoxelFigure variant={variant} inView={inView} />

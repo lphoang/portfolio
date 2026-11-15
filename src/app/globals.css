@@ -21,7 +21,15 @@
   --panel: #06110a;
   --line: #1f8a46;
   --bar: #2aa84a;
-  --glow: rgb(57 255 106 / 0.2);
+  --focus: #39ff6a;
+  --haze-rgb: 3 8 5;
+  --haze: 0.65;
+  --glow-bg: radial-gradient(
+    circle,
+    rgb(57 255 106 / 0.2),
+    rgb(43 255 198 / 0.07) 45%,
+    transparent 70%
+  );
   --card-title: #2bffc6;
   --era-display: var(--font-vt323);
   --era-sans: var(--font-plex-mono);
@@ -53,7 +61,10 @@
   --seal-ink: #f6e7c8;
   --seal-light: #b03d31;
   --bar: #2f5aa0;
-  --glow: rgb(247 228 139 / 0.28);
+  --focus: #f4d35e;
+  --haze-rgb: 10 26 63;
+  --haze: 0.78;
+  --glow-bg: radial-gradient(circle, rgb(247 228 139 / 0.28), transparent 68%);
   --card-title: #1f3b70;
   --era-display: var(--font-playfair);
   --era-sans: var(--font-playfair);
@@ -113,8 +124,9 @@ body {
   font-size: 17px;
 }
 
+/* Cards remap --accent for their own text; the focus ring keeps the page's color. */
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
 
@@ -156,6 +168,7 @@ body {
 
 [data-era='terminal'] .era-name::after {
   content: '█';
+  content: '█' / '';
   margin-left: 4px;
   color: var(--lime);
   animation: blink 1s steps(1) infinite;
@@ -171,6 +184,7 @@ body {
 
 [data-era='terminal'] .era-tagline::before {
   content: '$ echo ';
+  content: '$ echo ' / '';
   color: var(--mint);
 }
 
@@ -189,11 +203,13 @@ body {
 
 [data-era='terminal'] .section-label::before {
   content: '> ';
+  content: '> ' / '';
   color: var(--mint);
 }
 
 [data-era='terminal'] .section-label::after {
   content: '_';
+  content: '_' / '';
   color: var(--accent);
   animation: blink 1s steps(1) infinite;
 }
@@ -265,6 +281,19 @@ body {
   filter: url(#rough) drop-shadow(0 6px 9px rgb(0 0 0 / 0.5));
 }
 
+/* Card links lift a little on hover; the paper has no border to recolor. */
+[data-era='starry'] a.card {
+  transition: translate 0.2s;
+}
+
+[data-era='starry'] a.card:hover {
+  translate: 0 -2px;
+}
+
+[data-era='starry'] a.card:hover::before {
+  filter: url(#rough) drop-shadow(0 10px 14px rgb(0 0 0 / 0.6));
+}
+
 /* Boxes inside a card (the stats in a dashboard) are plain, not cards again. */
 [data-era='terminal'] .card .card::before,
 [data-era='starry'] .card .card::before {
@@ -310,12 +339,16 @@ body {
   display: none;
 }
 
+/* Sized to the largest viewport (toolbars hidden), so a phone's address bar
+   showing or hiding while scrolling doesn't resize, and so wipe, the canvas. */
 .era-bg {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
   z-index: 0;
   width: 100%;
-  height: 100%;
+  height: 100vh;
+  height: 100lvh;
 }
 
 .cypress,
@@ -338,18 +371,19 @@ body {
   height: 14vh;
 }
 
-/* A night-blue haze behind the text column keeps 1889 text readable over the painting. */
-.sky-scrim {
+/* A haze behind the text column keeps text readable over the moving background:
+   night blue in 1889, near-black on the terminal. Its strength (--haze) is checked by a test. */
+.text-haze {
   position: fixed;
   inset: 0;
   z-index: 2;
   pointer-events: none;
   background: linear-gradient(
     90deg,
-    rgb(10 26 63 / 0) max(0px, calc(50% - 470px)),
-    rgb(10 26 63 / 0.78) max(0px, calc(50% - 390px)),
-    rgb(10 26 63 / 0.78) min(100%, calc(50% + 390px)),
-    rgb(10 26 63 / 0) min(100%, calc(50% + 470px))
+    rgb(var(--haze-rgb) / 0) max(0px, calc(50% - 470px)),
+    rgb(var(--haze-rgb) / var(--haze)) max(0px, calc(50% - 390px)),
+    rgb(var(--haze-rgb) / var(--haze)) min(100%, calc(50% + 390px)),
+    rgb(var(--haze-rgb) / 0) min(100%, calc(50% + 470px))
   );
 }
 
@@ -374,15 +408,17 @@ body {
   position: absolute;
   left: 0;
   right: 0;
-  top: -140px;
+  top: 0;
   height: 140px;
   background: linear-gradient(transparent, rgb(57 255 106 / 0.07), transparent);
+  transform: translateY(-140px);
   animation: crt-sweep 7s linear infinite;
 }
 
+/* transform, not top: the sweep then runs on the compositor without layout. */
 @keyframes crt-sweep {
   to {
-    top: 100%;
+    transform: translateY(100vh);
   }
 }
 

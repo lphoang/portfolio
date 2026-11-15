@@ -34,3 +34,18 @@ export function pickShown(
   const other: Era = era === 'starry' ? 'terminal' : 'starry'
   return loaded[other] ? other : null
 }
+
+// What to download: the current era's figure right away, the other era's once the
+// browser is idle; never one that is already loaded or on its way.
+export function nextLoads(input: {
+  loaded: Partial<Record<Era, FigureData>>
+  pending: ReadonlySet<Era>
+  era: Era
+}): { now: Era | null; later: Era | null } {
+  const missing = (era: Era) => !input.loaded[era] && !input.pending.has(era)
+  const other: Era = input.era === 'starry' ? 'terminal' : 'starry'
+  return {
+    now: missing(input.era) ? input.era : null,
+    later: missing(other) ? other : null
+  }
+}

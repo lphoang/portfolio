@@ -1,4 +1,4 @@
-import { figureUrl, lightsFor, pickShown } from './figureEra'
+import { figureUrl, lightsFor, nextLoads, pickShown } from './figureEra'
 import type { FigureData } from './voxelize'
 
 const data = { step: 0.25, origin: [0, 0, 0], groups: [] } as FigureData
@@ -25,4 +25,28 @@ test('after a switch, the old outfit stays until the new one has loaded', () => 
   expect(pickShown({ terminal: data }, 'starry')).toBe('terminal')
   expect(pickShown({ terminal: data, starry: data }, 'starry')).toBe('starry')
   expect(pickShown({}, 'starry')).toBeNull()
+})
+
+test('loads the current era now and the other one later, each only once', () => {
+  const none = new Set<'starry' | 'terminal'>()
+  expect(nextLoads({ loaded: {}, pending: none, era: 'terminal' })).toEqual({
+    now: 'terminal',
+    later: 'starry'
+  })
+  // Both loaded: switching eras downloads nothing.
+  expect(
+    nextLoads({
+      loaded: { terminal: data, starry: data },
+      pending: none,
+      era: 'starry'
+    })
+  ).toEqual({ now: null, later: null })
+  // The other era is already on its way: don't ask again.
+  expect(
+    nextLoads({
+      loaded: { terminal: data },
+      pending: new Set(['starry']),
+      era: 'starry'
+    })
+  ).toEqual({ now: null, later: null })
 })
