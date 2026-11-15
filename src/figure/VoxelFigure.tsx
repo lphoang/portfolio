@@ -14,7 +14,7 @@ import { BoxGeometry, type Group, type InstancedMesh, Matrix4 } from 'three'
 import { useIsDark } from '@/lib/useIsDark'
 
 import type { Variant } from './model'
-import { pose } from './pose'
+import { easeOffset, frameloopFor, pose } from './pose'
 import type { FigureData } from './voxelize'
 import { hasWebGL } from './webgl'
 
@@ -23,8 +23,6 @@ const VIEW_UNITS = 31
 const PHASE: Record<Variant, number> = { dev: 0, creator: 1.7, player: 3.4 }
 const DRAG_SPEED = 0.012 // radians per pixel
 const CLICK_SLOP = 4 // px of movement that still counts as a click
-const IDLE_AFTER = 2500 // ms, matches pose()
-const EASE_BACK = 0.97 // per frame, once idle
 
 function subscribeReducedMotion(onChange: () => void) {
   const query = window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -87,16 +85,21 @@ function centerOffset(data: FigureData): [number, number, number] {
   return [offset(0), offset(1), offset(2)]
 }
 
-function Scene({ data, variant }: { data: FigureData; variant: Variant }) {
+function Scene({
+  data,
+  variant,
+  reducedMotion
+}: {
+  data: FigureData
+  variant: Variant
+  reducedMotion: boolean
+}) {
   const pivot = useRef<Group>(null)
   const motion = useRef({ offset: 0, lastInput: -1e9, hopAt: -1e9 })
   const dark = useIsDark()
-  const reducedMotion = useSyncExternalStore(
-    subscribeReducedMotion,
-    prefersReducedMotion,
-    () => false
-  )
   const canvas = useThree(state => state.gl.domElement)
+  // With reduced motion the canvas only draws on request (see frameloopFor).
+  const invalidate = useThree(state => state.invalidate)
   const center = useMemo(() => centerOffset(data), [data])
 
   // Horizontal drags spin the figure; a click without movement makes it hop.
@@ -112,6 +115,7 @@ function Scene({ data, variant }: { data: FigureData; variant: Variant }) {
       drag = { x: event.clientX, moved: drag.moved + Math.abs(dx) }
       motion.current.offset += dx * DRAG_SPEED
       motion.current.lastInput = performance.now()
+      invalidate()
     }
     const up = () => {
       if (drag && drag.moved < CLICK_SLOP)
@@ -131,7 +135,7 @@ function Scene({ data, variant }: { data: FigureData; variant: Variant }) {
       canvas.removeEventListener('pointerup', up)
       canvas.removeEventListener('pointercancel', cancel)
     }
-  }, [canvas])
+  }, [canvas, invalidate])
 
   useFrame(({ camera, size }) => {
     // Fit the figure to the canvas whenever its size changes.
@@ -144,8 +148,7 @@ function Scene({ data, variant }: { data: FigureData; variant: Variant }) {
 
     const m = motion.current
     const t = performance.now()
-    // After a drag, ease the extra rotation back so the sway takes over.
-    if (t - m.lastInput > IDLE_AFTER) m.offset *= EASE_BACK
+    m.offset = easeOffset({ ...m, t, reducedMotion })
     const p = pose({ t, ...m, phase: PHASE[variant], reducedMotion })
     pivot.current!.rotation.y = p.rotationY
     pivot.current!.position.y = p.y
@@ -171,8 +174,15 @@ function Scene({ data, variant }: { data: FigureData; variant: Variant }) {
   )
 }
 
-export default function VoxelFigure({ variant }: { variant: Variant }) {
+type Props = { variant: Variant; inView: boolean }
+
+export default function VoxelFigure({ variant, inView }: Props) {
   const [data, setData] = useState<FigureData | null>(null)
+  const reducedMotion = useSyncExternalStore(
+    subscribeReducedMotion,
+    prefersReducedMotion,
+    () => false
+  )
 
   useEffect(() => {
     // No WebGL: skip the download too; the placeholder stays.
@@ -199,12 +209,12 @@ export default function VoxelFigure({ variant }: { variant: Variant }) {
       camera={{ position: [14, 12, 34], near: 0.1, far: 200 }}
       dpr={[1, 2]}
       gl={{ antialias: false }}
-      fallback={null}
+      frameloop={frameloopFor({ inView, reducedMotion })}
       aria-hidden
       // pan-y: vertical swipes still scroll the page on phones.
       style={{ touchAction: 'pan-y', cursor: 'grab' }}
     >
-      <Scene data={data} variant={variant} />
+      <Scene data={data} variant={variant} reducedMotion={reducedMotion} />
     </Canvas>
   )
 }

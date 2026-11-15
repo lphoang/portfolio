@@ -20,3 +20,11 @@ test('a browser that throws while asking for WebGL means no figure', () => {
     )
   ).toBe(false)
 })
+
+test('WebGL1 only is not enough: three.js needs WebGL2', () => {
+  const canvas = () =>
+    ({
+      getContext: (type: string) => (type === 'webgl' ? {} : null)
+    }) as unknown as HTMLCanvasElement
+  expect(hasWebGL(canvas)).toBe(false)
+})

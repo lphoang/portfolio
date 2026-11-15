@@ -30,3 +30,28 @@ export function pose(input: PoseInput): { rotationY: number; y: number } {
 
   return { rotationY: offset + sway, y: hop + bob }
 }
+
+const EASE_BACK = 0.97 // per frame, once idle
+
+// After a drag, ease the extra rotation back so the sway takes over again.
+// With reduced motion nothing moves by itself: the figure stays where it was left.
+export function easeOffset(input: {
+  offset: number
+  t: number
+  lastInput: number
+  reducedMotion: boolean
+}): number {
+  const { offset, t, lastInput, reducedMotion } = input
+  if (reducedMotion || t - lastInput <= IDLE_AFTER) return offset
+  return offset * EASE_BACK
+}
+
+// How often the canvas draws: never while off screen (saves battery), only on
+// changes with reduced motion (nothing animates), otherwise every frame.
+export function frameloopFor(input: {
+  inView: boolean
+  reducedMotion: boolean
+}): 'always' | 'demand' | 'never' {
+  if (!input.inView) return 'never'
+  return input.reducedMotion ? 'demand' : 'always'
+}
