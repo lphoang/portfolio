@@ -1,0 +1,36 @@
+import type { Era } from '@/lib/era'
+
+import type { Variant } from './model'
+import type { FigureData } from './voxelize'
+
+export function figureUrl(variant: Variant, era: Era): string {
+  return `/figures/${variant}-${era}.json`
+}
+
+type Light = [color: string, intensity: number]
+
+// 1889: cool moonlit fill with a warm lamp; terminal: neutral with a green rim from behind.
+export function lightsFor(era: Era): {
+  ambient: Light
+  key: Light
+  rim: Light
+} {
+  return era === 'starry'
+    ? { ambient: ['#9fb4ff', 1.0], key: ['#ffe2a8', 1.9], rim: ['#000000', 0] }
+    : {
+        ambient: ['#ffffff', 0.95],
+        key: ['#e0ffe8', 1.5],
+        rim: ['#39ff6a', 1.3]
+      }
+}
+
+// Which era's outfit to show: the current one once it has loaded, otherwise the
+// other (already shown) one, so a slow download never leaves an empty square.
+export function pickShown(
+  loaded: Partial<Record<Era, FigureData>>,
+  era: Era
+): Era | null {
+  if (loaded[era]) return era
+  const other: Era = era === 'starry' ? 'terminal' : 'starry'
+  return loaded[other] ? other : null
+}

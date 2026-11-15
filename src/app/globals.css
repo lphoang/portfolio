@@ -21,6 +21,7 @@
   --panel: #06110a;
   --line: #1f8a46;
   --bar: #2aa84a;
+  --glow: rgb(57 255 106 / 0.2);
   --card-title: #2bffc6;
   --era-display: var(--font-vt323);
   --era-sans: var(--font-plex-mono);
@@ -52,6 +53,7 @@
   --seal-ink: #f6e7c8;
   --seal-light: #b03d31;
   --bar: #2f5aa0;
+  --glow: rgb(247 228 139 / 0.28);
   --card-title: #1f3b70;
   --era-display: var(--font-playfair);
   --era-sans: var(--font-playfair);

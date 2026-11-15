@@ -40,8 +40,8 @@ function useInView<T extends Element>() {
 type Props = { variant: Variant; label: string }
 
 // A fixed-size square, so nothing jumps while the figure loads (or if WebGL is missing).
-// In dark mode a soft light glow sits behind it: the dark hair and clothes would
-// otherwise blend into the dark background.
+// A soft glow sits behind it (moonlight in 1889, green on the terminal): the dark hair
+// and clothes would otherwise blend into the dark background.
 export function Figure({ variant, label }: Props) {
   const { ref, inView } = useInView<HTMLDivElement>()
   return (
@@ -49,7 +49,7 @@ export function Figure({ variant, label }: Props) {
       ref={ref}
       role="img"
       aria-label={label}
-      className="relative mx-auto size-64 rounded-full sm:size-72 dark:bg-[radial-gradient(circle,var(--spot)_0%,transparent_68%)]"
+      className="relative mx-auto size-64 rounded-full bg-[radial-gradient(circle,var(--glow)_0%,transparent_68%)] sm:size-72"
     >
       <FigureErrorBoundary>
         <VoxelFigure variant={variant} inView={inView} />
