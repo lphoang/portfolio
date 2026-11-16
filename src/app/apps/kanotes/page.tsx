@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     'Hold the side button and Kapy turns any screen into a calendar event or a note. Coming soon to Google Play.'
 }
 
-// Placeholders for now; the real phone captures replace these files (1080×2340).
+// Captured on a Galaxy S24 Ultra, cropped to 1080×2160 without the status and gesture bars.
 const screens = [
   {
     src: '/apps/kanotes/screen-1.png',
@@ -82,7 +82,7 @@ export default function KanotesPage() {
               src={screen.src}
               alt={screen.alt}
               width={1080}
-              height={2340}
+              height={2160}
               sizes="(min-width: 640px) 25vw, 50vw"
               className="h-auto w-full rounded-xl border border-line"
             />
