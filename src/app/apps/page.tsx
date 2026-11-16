@@ -18,7 +18,7 @@ export default function AppsPage() {
         <SectionLabel>apps</SectionLabel>
         <div className="space-y-3">
           {apps.map(app => (
-            <AppCard key={app.name} app={app} />
+            <AppCard key={app.name} app={app} href={app.href} />
           ))}
         </div>
       </section>
