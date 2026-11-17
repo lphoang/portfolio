@@ -1,9 +1,11 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 
-import { SectionLabel } from '@/components/SectionLabel'
+import { Icon } from '@/components/kanotes/Icon'
+import { T } from '@/components/kanotes/T'
 
 export const metadata: Metadata = {
-  title: 'Kanotes privacy policy',
+  title: { absolute: 'Kanotes privacy policy' },
   description: 'What Kanotes reads, where it goes, and what is kept.'
 }
 
@@ -151,78 +153,70 @@ const CONTACT = 'lephuochoang1810@gmail.com'
 
 export default function KanotesPrivacyPage() {
   return (
-    <div className="space-y-8">
-      <section className="card p-6">
-        <h1 className="font-display text-3xl font-bold">
-          Kanotes privacy policy
+    <>
+      <article className="k-wrap k-policy">
+        <h1>
+          <T
+            vi="Chính sách quyền riêng tư của Kanotes"
+            en="Kanotes privacy policy"
+          />
         </h1>
-        <p className="mt-2 font-label text-[10px] text-muted">
-          Effective 16 November 2026 · Tiếng Việt bên dưới
+        <p className="k-policy-date">
+          <T vi="Có hiệu lực từ 16/11/2026" en="Effective 16 November 2026" />
         </p>
-        <p className="mt-3 text-sm">
-          Kanotes is made by Le Phuoc Hoang. This policy explains what Kanotes
-          reads, where it goes, and what is kept.
+        <p className="k-text">
+          <T
+            vi="Kanotes do Lê Phước Hoàng làm ra. Chính sách này giải thích Kanotes đọc gì, dữ liệu đi đâu và được giữ lại những gì."
+            en="Kanotes is made by Le Phuoc Hoang. This policy explains what Kanotes reads, where it goes, and what is kept."
+          />
         </p>
-      </section>
-      <Policy
-        lang="en"
-        label="english"
-        parts={english}
-        contactHeading="Contact"
-      />
-      <Policy
-        lang="vi"
-        label="tiếng việt"
-        parts={vietnamese}
-        contactHeading="Liên hệ"
-      />
-    </div>
+        <Policy lang="en" parts={english} contactHeading="Contact" />
+        <Policy lang="vi" parts={vietnamese} contactHeading="Liên hệ" />
+      </article>
+      <footer className="k-foot">
+        <Link href="/apps/kanotes" className="k-back">
+          <Icon name="arrowLeft" size={18} />
+          Kanotes
+        </Link>
+      </footer>
+    </>
   )
 }
 
+// One language's policy; CSS shows the visitor's language (see T).
 function Policy({
   lang,
-  label,
   parts,
   contactHeading
 }: {
-  lang: string
-  label: string
+  lang: 'en' | 'vi'
   parts: Part[]
   contactHeading: string
 }) {
   return (
-    <section lang={lang}>
-      <SectionLabel>{label}</SectionLabel>
-      <div className="card space-y-5 p-5 text-sm leading-relaxed">
-        {parts.map(part => (
-          <div key={part.heading}>
-            <h2 className="font-display text-base font-bold">{part.heading}</h2>
-            {part.intro && <p className="mt-1">{part.intro}</p>}
-            {part.list && (
-              <ul className="mt-1 list-disc space-y-1 pl-5">
-                {part.list.map(item => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            )}
-            {part.text?.map(line => (
-              <p key={line} className="mt-1">
-                {line}
-              </p>
-            ))}
-          </div>
-        ))}
-        <div>
-          <h2 className="font-display text-base font-bold">{contactHeading}</h2>
-          <a
-            href={`mailto:${CONTACT}`}
-            className="mt-1 inline-block text-accent"
-          >
-            {CONTACT}
-          </a>
+    <section lang={lang} className={`k-${lang} k-policy-body`}>
+      {parts.map(part => (
+        <div key={part.heading}>
+          <h2>{part.heading}</h2>
+          {part.intro && <p>{part.intro}</p>}
+          {part.list && (
+            <ul>
+              {part.list.map(item => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          )}
+          {part.text?.map(line => (
+            <p key={line}>{line}</p>
+          ))}
         </div>
-      </div>
+      ))}
+      <h2>{contactHeading}</h2>
+      <p>
+        <a href={`mailto:${CONTACT}`} className="k-link">
+          {CONTACT}
+        </a>
+      </p>
     </section>
   )
 }

@@ -1,0 +1,645 @@
+/* Kanotes' own look, from the app's theme (screennote ui/theme/Color.kt):
+   mint, with yuzu for what matters (light only, by choice), Nunito throughout.
+   This file stays loaded after a visit, so every rule is scoped to .kanotes
+   or to the Kanotes attributes on <html>. */
+
+.kanotes {
+  --k-bg: #e8f6ef;
+  --k-ink: #1e2b25;
+  --k-muted: #55665d;
+  --k-primary: #12795f;
+  --k-card: #ffffff;
+  --k-border: #d3ebdf;
+  --k-panel: #f4fbf7;
+  --k-soft: #d8efe4;
+  --k-yuzu: #ffb347;
+  --k-on-yuzu: #1c140f;
+  --k-event: #b86a00;
+  --k-event-bg: #fff1dc;
+  --k-shadow: rgb(30 77 58 / 0.16);
+  --k-bezel: #1b1512;
+
+  min-height: 100dvh;
+  overflow-x: clip;
+  background-color: var(--k-bg);
+  color: var(--k-ink);
+  font-family: var(--font-nunito), ui-rounded, system-ui, sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  caret-color: var(--k-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* The page behind the page (overscroll, short screens) and the scrollbar. */
+html:has(.kanotes) {
+  scrollbar-color: #12795f66 #e8f6ef;
+}
+html:has(.kanotes) body {
+  background-color: #e8f6ef;
+}
+
+/* One language at a time. Without JavaScript the attribute is missing: English. */
+html:not([data-kanotes-lang='vi']) .k-vi {
+  display: none !important;
+}
+html[data-kanotes-lang='vi'] .k-en {
+  display: none !important;
+}
+
+.kanotes ::selection {
+  background-color: var(--k-yuzu);
+  color: var(--k-on-yuzu);
+}
+.kanotes :focus-visible {
+  outline: 3px solid var(--k-primary);
+  outline-offset: 3px;
+  border-radius: 12px;
+}
+.kanotes a {
+  color: inherit;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 2px;
+}
+.kanotes h1,
+.kanotes h2,
+.kanotes h3,
+.kanotes p {
+  margin: 0;
+}
+.kanotes .k-wrap {
+  width: min(1120px, 100% - 2.5rem);
+  margin-inline: auto;
+}
+
+/* ---------- top bar ---------- */
+.kanotes .k-top {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--k-bg);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--k-border) 70%, transparent);
+}
+.kanotes .k-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 68px;
+}
+.kanotes .k-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 1.35rem;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+}
+.kanotes .k-switch {
+  display: inline-flex;
+  padding: 4px;
+  border: 1px solid var(--k-border);
+  border-radius: 999px;
+  background-color: var(--k-card);
+}
+.kanotes .k-switch button {
+  padding: 0.3rem 0.85rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--k-muted);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease-out,
+    color 0.2s ease-out;
+}
+.kanotes .k-switch button:hover {
+  color: var(--k-ink);
+}
+.kanotes .k-switch button[aria-pressed='true'] {
+  background-color: var(--k-yuzu);
+  color: var(--k-on-yuzu);
+}
+
+/* ---------- shared section type ---------- */
+.kanotes .k-section {
+  padding-block: clamp(4rem, 9vw, 7rem);
+}
+.kanotes .k-band {
+  background-color: var(--k-panel);
+}
+.kanotes .k-h2 {
+  max-width: 18ch;
+  font-size: clamp(2rem, 4.2vw, 3.1rem);
+  font-weight: 900;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+.kanotes .k-text {
+  max-width: 52ch;
+  margin-top: 1rem;
+  color: var(--k-muted);
+  font-size: 1.125rem;
+  text-wrap: pretty;
+}
+.kanotes .k-split {
+  display: grid;
+  gap: 3rem;
+  align-items: center;
+}
+@media (min-width: 880px) {
+  .kanotes .k-split {
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 4rem;
+  }
+  .kanotes .k-split--flip {
+    grid-template-columns: 0.9fr 1.1fr;
+  }
+  .kanotes .k-split--flip .k-art {
+    order: -1;
+  }
+}
+.kanotes .k-art {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+/* ---------- phone ---------- */
+.kanotes .k-phone {
+  position: relative;
+  z-index: 1;
+  width: min(280px, 72vw);
+  padding: 9px;
+  border-radius: 42px;
+  background-color: var(--k-bezel);
+  box-shadow:
+    0 36px 60px -28px var(--k-shadow),
+    0 14px 28px -16px var(--k-shadow);
+}
+.kanotes .k-phone img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 33px;
+}
+/* The side button: the whole app starts here. */
+.kanotes .k-phone::after {
+  content: '';
+  position: absolute;
+  top: 24%;
+  right: -4px;
+  width: 4px;
+  height: 58px;
+  border-radius: 0 4px 4px 0;
+  background-color: var(--k-bezel);
+}
+.kanotes .k-phone--small {
+  width: min(230px, 62vw);
+}
+.kanotes .k-disc {
+  position: absolute;
+  width: min(460px, 112%);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background-color: var(--k-soft);
+}
+
+/* ---------- hero ---------- */
+.kanotes .k-hero {
+  padding-block: clamp(2.5rem, 7vw, 5.5rem) clamp(4rem, 9vw, 7rem);
+}
+.kanotes .k-hero h1 {
+  max-width: 13ch;
+  font-size: clamp(2.75rem, 6.4vw, 4.9rem);
+  font-weight: 900;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+.kanotes .k-lede {
+  max-width: 40ch;
+  margin-top: 1.5rem;
+  color: var(--k-muted);
+  font-size: clamp(1.125rem, 1.6vw, 1.3rem);
+  text-wrap: pretty;
+}
+.kanotes .k-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin: 2rem 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--k-muted);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+.kanotes .k-facts li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.kanotes .k-facts svg {
+  color: var(--k-primary);
+}
+.kanotes .k-phone--hero {
+  width: min(310px, 74vw);
+  transform: rotate(-3deg);
+}
+.kanotes .k-phone--hero::after {
+  background-color: var(--k-yuzu);
+  box-shadow: 0 0 0 0 rgb(255 179 71 / 0.6);
+}
+.kanotes .k-hold {
+  position: absolute;
+  top: calc(24% + 14px);
+  left: calc(100% + 18px);
+  display: none;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  background-color: var(--k-yuzu);
+  color: var(--k-on-yuzu);
+  font-size: 0.85rem;
+  font-weight: 800;
+  white-space: nowrap;
+  transform: rotate(3deg);
+}
+@media (min-width: 560px) {
+  .kanotes .k-hold {
+    display: block;
+  }
+}
+
+/* The one authored moment: the hero phone settles in and its side button is held. */
+@media (prefers-reduced-motion: no-preference) {
+  .kanotes .k-phone--hero {
+    animation: k-settle 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .kanotes .k-phone--hero::after {
+    animation: k-hold 1.4s cubic-bezier(0.16, 1, 0.3, 1) 0.9s both;
+  }
+}
+@keyframes k-settle {
+  from {
+    transform: translateY(36px) rotate(0deg);
+  }
+  to {
+    transform: translateY(0) rotate(-3deg);
+  }
+}
+@keyframes k-hold {
+  0% {
+    transform: translateX(0);
+    box-shadow: 0 0 0 0 rgb(255 179 71 / 0.7);
+  }
+  25% {
+    transform: translateX(-2px);
+  }
+  100% {
+    transform: translateX(0);
+    box-shadow: 0 0 0 14px rgb(255 179 71 / 0);
+  }
+}
+
+/* ---------- store badge ---------- */
+.kanotes .k-store {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-top: 2.25rem;
+}
+.kanotes .k-store--center {
+  align-items: center;
+}
+.kanotes .k-soon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem 0.85rem;
+  border-radius: 999px;
+  background-color: var(--k-yuzu);
+  color: var(--k-on-yuzu);
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+.kanotes .k-play {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.85rem 1.4rem;
+  border-radius: 18px;
+  background-color: var(--k-ink);
+  color: var(--k-bg);
+  font-size: 1.05rem;
+  font-weight: 800;
+  opacity: 0.5;
+  cursor: not-allowed;
+  user-select: none;
+}
+
+/* ---------- message → calendar ---------- */
+.kanotes .k-flow {
+  display: grid;
+  gap: 1.5rem;
+  justify-items: center;
+  margin-top: 3rem;
+}
+@media (min-width: 900px) {
+  .kanotes .k-flow {
+    grid-template-columns: 1fr auto auto auto 1fr;
+    gap: 1.75rem;
+    align-items: center;
+  }
+}
+.kanotes .k-flow-step {
+  display: grid;
+  gap: 0.9rem;
+  justify-items: center;
+  max-width: 330px;
+  text-align: center;
+}
+.kanotes .k-flow-caption {
+  color: var(--k-muted);
+  font-weight: 700;
+  text-wrap: balance;
+}
+.kanotes .k-flow-caption strong {
+  display: block;
+  color: var(--k-ink);
+  font-size: 1.15rem;
+  font-weight: 900;
+}
+.kanotes .k-flow-arrow {
+  color: var(--k-primary);
+  transform: rotate(90deg);
+}
+@media (min-width: 900px) {
+  .kanotes .k-flow-arrow {
+    transform: none;
+  }
+}
+.kanotes .k-bubble {
+  max-width: 30ch;
+  padding: 0.75rem 1rem 0.85rem;
+  border: 1px solid var(--k-border);
+  border-radius: 22px 22px 22px 6px;
+  background-color: var(--k-card);
+  box-shadow: 0 12px 26px -18px var(--k-shadow);
+  text-align: left;
+}
+.kanotes .k-bubble-name {
+  display: block;
+  color: var(--k-muted);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+.kanotes .k-event {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.9rem 1.2rem 0.9rem 0.9rem;
+  border: 1px solid var(--k-border);
+  border-radius: 22px;
+  background-color: var(--k-card);
+  box-shadow: 0 12px 26px -18px var(--k-shadow);
+  text-align: left;
+}
+.kanotes .k-event-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background-color: var(--k-event-bg);
+  color: var(--k-event);
+}
+.kanotes .k-event-title {
+  display: block;
+  font-weight: 900;
+  line-height: 1.25;
+}
+.kanotes .k-event-when {
+  display: block;
+  color: var(--k-muted);
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+.kanotes .k-event-where {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--k-primary);
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
+/* ---------- Vietnamese phrases ---------- */
+.kanotes .k-phrases {
+  display: grid;
+  gap: 0.7rem;
+  margin: 2rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.kanotes .k-phrase {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+}
+.kanotes .k-said {
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--k-border);
+  border-radius: 18px 18px 18px 5px;
+  background-color: var(--k-card);
+  font-weight: 700;
+}
+.kanotes .k-read {
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  background-color: var(--k-event-bg);
+  color: var(--k-ink);
+  font-weight: 800;
+}
+.kanotes .k-phrase svg {
+  color: var(--k-primary);
+}
+.kanotes .k-note {
+  max-width: 52ch;
+  margin-top: 1.5rem;
+  color: var(--k-muted);
+  text-wrap: pretty;
+}
+
+/* ---------- privacy ---------- */
+.kanotes .k-private {
+  display: grid;
+  gap: 2.5rem;
+}
+@media (min-width: 880px) {
+  .kanotes .k-private {
+    grid-template-columns: 1.25fr 0.75fr;
+    gap: 4rem;
+    align-items: start;
+  }
+}
+.kanotes .k-mark {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 1.5rem;
+  border-radius: 22px;
+  background-color: var(--k-soft);
+  color: var(--k-primary);
+}
+.kanotes .k-checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 1.75rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.kanotes .k-checks li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  background-color: var(--k-card);
+  border: 1px solid var(--k-border);
+  font-weight: 800;
+}
+.kanotes .k-checks svg {
+  color: var(--k-primary);
+}
+.kanotes .k-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 1.75rem;
+  color: var(--k-primary);
+  font-weight: 800;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+  transition: text-decoration-color 0.2s ease-out;
+}
+.kanotes .k-link:hover {
+  text-decoration-color: currentColor;
+}
+.kanotes .k-cloud {
+  padding: 1.75rem;
+  border: 1px solid var(--k-border);
+  border-radius: 28px;
+  background-color: var(--k-card);
+}
+.kanotes .k-cloud h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 1.35rem;
+  font-weight: 900;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+.kanotes .k-cloud h3 svg {
+  flex: none;
+  color: var(--k-primary);
+}
+.kanotes .k-cloud p {
+  margin-top: 0.75rem;
+  color: var(--k-muted);
+}
+
+/* ---------- closing and the way back ---------- */
+.kanotes .k-closing {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+}
+.kanotes .k-closing .k-h2 {
+  margin-top: 1.25rem;
+}
+.kanotes .k-foot {
+  display: flex;
+  justify-content: center;
+  padding-block: 2rem 3rem;
+}
+.kanotes .k-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: 999px;
+  color: var(--k-muted);
+  font-size: 0.95rem;
+  font-weight: 800;
+  text-decoration: none;
+  transition:
+    background-color 0.2s ease-out,
+    color 0.2s ease-out;
+}
+.kanotes .k-back:hover {
+  background-color: var(--k-card);
+  color: var(--k-ink);
+}
+
+/* ---------- privacy policy page ---------- */
+.kanotes .k-policy {
+  max-width: 760px;
+  margin-inline: auto;
+  padding-block: clamp(2.5rem, 6vw, 4.5rem) 1rem;
+}
+.kanotes .k-policy h1 {
+  font-size: clamp(2.2rem, 5vw, 3.2rem);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+.kanotes .k-policy-date {
+  margin-top: 0.75rem;
+  color: var(--k-muted);
+  font-weight: 700;
+}
+.kanotes .k-policy-body {
+  margin-top: 2.5rem;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  border: 1px solid var(--k-border);
+  border-radius: 28px;
+  background-color: var(--k-card);
+}
+.kanotes .k-policy-body h2 {
+  font-size: 1.3rem;
+  font-weight: 900;
+  line-height: 1.25;
+}
+.kanotes .k-policy-body > div + div,
+.kanotes .k-policy-body > div + h2 {
+  margin-top: 2rem;
+}
+.kanotes .k-policy-body .k-link {
+  margin-top: 0;
+}
+.kanotes .k-policy-body p,
+.kanotes .k-policy-body ul {
+  margin: 0.6rem 0 0;
+  max-width: 68ch;
+}
+.kanotes .k-policy-body ul {
+  padding-left: 1.25rem;
+  list-style: disc;
+}
+.kanotes .k-policy-body li + li {
+  margin-top: 0.4rem;
+}
+.kanotes .k-policy-body li::marker {
+  color: var(--k-primary);
+}
