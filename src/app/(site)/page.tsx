@@ -66,7 +66,11 @@ export default async function Home() {
 
       <section>
         <SectionLabel>building</SectionLabel>
-        <AppCard app={apps[0]} href="/apps" />
+        <div className="space-y-3">
+          {apps.map(app => (
+            <AppCard key={app.name} app={app} href={app.href ?? '/apps'} />
+          ))}
+        </div>
       </section>
 
       <section>

@@ -9,12 +9,8 @@ import {
   VT323
 } from 'next/font/google'
 
-import { EraFavicon } from '@/components/EraFavicon'
-import { Navbar } from '@/components/Navbar'
-import { Silhouettes } from '@/components/backgrounds/Silhouettes'
-import { StarrySky } from '@/components/backgrounds/StarrySky'
-import { TerminalRain } from '@/components/backgrounds/TerminalRain'
 import { eraScript } from '@/lib/era'
+import { languageScript } from '@/lib/kanotesLang'
 
 import './globals.css'
 
@@ -91,19 +87,12 @@ export default function RootLayout({
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: eraScript }} />
+        {/* Picks the Kanotes page's language before paint; must run from the root
+            layout, since client-side navigation never runs a nested layout's script. */}
+        <script dangerouslySetInnerHTML={{ __html: languageScript }} />
       </head>
-      <body className="min-h-dvh antialiased">
-        <TerminalRain />
-        <StarrySky />
-        <Silhouettes />
-        <div className="text-haze" aria-hidden />
-        <div className="crt dev-only" aria-hidden />
-        <Navbar />
-        <main className="relative z-[4] mx-auto w-full max-w-3xl px-4 pt-6 pb-16 sm:px-6">
-          {children}
-        </main>
-        <EraFavicon />
-      </body>
+      {/* The portfolio's frame is in (site)/layout.tsx; Kanotes has its own. */}
+      <body className="min-h-dvh antialiased">{children}</body>
     </html>
   )
 }
