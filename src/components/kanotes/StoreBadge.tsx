@@ -1,8 +1,8 @@
 import { T } from './T'
 
-// The signed APK, attached to a release of the public portfolio repo (the app's code stays private).
+// The signed APK, from the releases-only lphoang/kanotes repo (the app's code stays private).
 export const APK_URL =
-  'https://github.com/lphoang/portfolio/releases/download/kanotes-v0.1.0/kanotes-0.1.0.apk'
+  'https://github.com/lphoang/kanotes/releases/download/v0.1.0/kanotes-0.1.0.apk'
 
 /**
  * Kanotes isn't on Google Play yet: "Coming soon" sits above a Play button that
