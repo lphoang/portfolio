@@ -68,3 +68,11 @@ test('the privacy policy shows one language at a time and links back to Kanotes'
   )
   expect(policy).not.toContain('section-label')
 })
+
+test('visitors can download the signed APK from its GitHub release', () => {
+  const apk =
+    'https://github.com/lphoang/portfolio/releases/download/kanotes-v0.1.0/kanotes-0.1.0.apk'
+  expect(html).toContain(`href="${apk}"`)
+  expect(html).toContain('Download the APK')
+  expect(html).toContain('Tải tệp APK')
+})
