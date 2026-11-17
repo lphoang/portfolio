@@ -35,7 +35,7 @@ const english: Part[] = [
     heading: 'Where it is read',
     list: [
       'On your phone (the default). Gemini Nano, or the Gemma model on phones without Nano, reads the text on your phone. It does not leave your phone.',
-      'Kanotes Cloud (optional subscription). If you subscribe, the text is sent to Google’s Gemini service (through Google Firebase) to be read, and the answer comes back to your phone. Kanotes doesn’t keep a copy anywhere else. Google handles this text under its own terms and privacy policy. To check that requests really come from Kanotes, Firebase App Check sends Google information about the app and your device’s integrity (Google Play Integrity).'
+      'Kanotes Cloud (optional subscription). If you subscribe, the text is sent to Google’s Gemini service (through Google Firebase) to be read, and the answer comes back to your phone. Kanotes doesn’t keep a copy anywhere else. Google doesn’t use this text to improve its products; it keeps it for a limited time only to catch misuse and meet legal requirements, and may store it briefly in any country where Google has data centres. To check that requests really come from Kanotes, Firebase App Check sends Google information about the app and your device’s integrity (Google Play Integrity).'
     ]
   },
   {
@@ -103,7 +103,7 @@ const vietnamese: Part[] = [
     heading: 'Đọc ở đâu',
     list: [
       'Trên điện thoại (mặc định). Gemini Nano, hoặc mô hình Gemma trên điện thoại không có Nano, đọc chữ ngay trên điện thoại. Chữ không rời khỏi điện thoại.',
-      'Kanotes Cloud (gói đăng ký, không bắt buộc). Nếu bạn đăng ký, chữ được gửi đến dịch vụ Gemini của Google (qua Google Firebase) để đọc, rồi kết quả trả về điện thoại. Kanotes không giữ bản sao ở nơi nào khác. Google xử lý chữ này theo điều khoản và chính sách quyền riêng tư của Google. Để chắc rằng yêu cầu thật sự đến từ Kanotes, Firebase App Check gửi cho Google thông tin về ứng dụng và độ toàn vẹn của thiết bị (Google Play Integrity).'
+      'Kanotes Cloud (gói đăng ký, không bắt buộc). Nếu bạn đăng ký, chữ được gửi đến dịch vụ Gemini của Google (qua Google Firebase) để đọc, rồi kết quả trả về điện thoại. Kanotes không giữ bản sao ở nơi nào khác. Google không dùng chữ này để cải thiện sản phẩm của Google; Google chỉ giữ chữ trong một thời gian có hạn để phát hiện việc lạm dụng và đáp ứng yêu cầu pháp luật, và có thể lưu tạm ở bất kỳ quốc gia nào Google có trung tâm dữ liệu. Để chắc rằng yêu cầu thật sự đến từ Kanotes, Firebase App Check gửi cho Google thông tin về ứng dụng và độ toàn vẹn của thiết bị (Google Play Integrity).'
     ]
   },
   {
@@ -162,7 +162,7 @@ export default function KanotesPrivacyPage() {
           />
         </h1>
         <p className="k-policy-date">
-          <T vi="Có hiệu lực từ 16/11/2026" en="Effective 16 November 2026" />
+          <T vi="Có hiệu lực từ 17/11/2026" en="Effective 17 November 2026" />
         </p>
         <p className="k-text">
           <T
